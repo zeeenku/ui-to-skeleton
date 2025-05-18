@@ -29,7 +29,7 @@ export default function DemoAnimation() {
             <div className="h-3 w-full bg-cyan-200 rounded-md animate-pulse"></div>
             <div className="h-3 w-3/4 bg-cyan-200 rounded-md animate-pulse"></div>
           </div>
-          <div className="mt-4 flex justify-end">
+          <div className="mt-7 flex justify-end">
             <div className="h-10 w-28 bg-cyan-200 rounded-md animate-pulse"></div>
           </div>
         </div>

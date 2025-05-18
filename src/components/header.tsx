@@ -5,11 +5,59 @@ import { Button } from "@/components/ui/button"
 import { Github, Menu } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { useEffect, useState } from "react"
 
 export function Header() {
+ const [showHeader, setShowHeader] = useState(true);
+  let lastScrollY = 0; 
+
+  const handleScroll = () => {
+    const currentScrollY = window.scrollY;
+    const documentHeight = document.documentElement.scrollHeight;
+    const windowHeight = window.innerHeight;
+
+    if (currentScrollY + windowHeight >= documentHeight) {
+        setShowHeader(false);
+      return;
+    }
+
+    if (currentScrollY === 0) {
+        setShowHeader(true);
+      return;
+    }
+
+    if (currentScrollY > lastScrollY) {
+      setShowHeader(false);
+    }
+    else if (currentScrollY <= lastScrollY) {
+      setShowHeader(true);
+    }
+
+    lastScrollY = currentScrollY;
+  };
+
+  useEffect(() => {
+    const throttleScroll = handleScroll//debounce(handleScroll, 20);
+    window.addEventListener("scroll", throttleScroll);
+    return () => {
+      window.removeEventListener("scroll", throttleScroll);
+    };
+  }, []);
+
+const debounce = <T extends (...args: any[]) => void>(func: T, wait: number) => {
+  let timeout: NodeJS.Timeout;
+  return (...args: Parameters<T>) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+};
+
+
+
+
   return (
-    <header className="sticky top-0 z-50 glass-effect backdrop-blur-md border-b border-cyan-100 shadow-sm">
-      <div className="flex h-16 items-center justify-between p-4 md:px-16">
+    <header className={`${showHeader ? "top-0" : "-top-16" }  duration-200 w-full fixed z-50 glass-effect backdrop-blur-md border-b border-cyan-100 shadow-sm`}>
+      <div className="flex h-16 items-center justify-between p-4 lg:px-16">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <div className="h-8 w-8 text-cyan-500">
