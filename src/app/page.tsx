@@ -11,13 +11,14 @@ import { useLocalStorage } from "@/hooks/use-local-storage"
 import DemoAnimation from "@/components/demo-animation"
 import TestimonialCard from "@/components/testimonial-card"
 import PricingCard from "@/components/pricing-card"
-import IntegrationsSection from "@/components/integrations-section"
+import SupportedTools from "@/components/supported-tools"
 import FloatingShapes from "@/components/floating-shapes"
 import FeatureCard from "@/components/feature-card"
 import { Header } from "@/components/header"
 import { Hero } from "@/components/hero"
 import { Demo } from "@/components/demo"
 import { Comparaison } from "@/components/comparaison"
+import { Features } from "@/components/features"
 
 export default function Home() {
   const [showEditor, setShowEditor] = useState(false)
@@ -35,18 +36,21 @@ export default function Home() {
 
       <main className="w-full mt-16 flex-1 relative z-10">
         {!showEditor ? (
-          <div className="w-full flex flex-col items-center justify-center space-y-16">
+          <div className="w-full flex flex-col items-center justify-center space-y-24">
 
-            <Hero/>
+            <div className="space-y-8">
+              <Hero/>
+              <SupportedTools />
+            </div>
+
+
             {/* Demo Section */}
             <div className="space-y-8">
               <Demo/>
               <Comparaison/>
             </div>
-            {/* Integrations Section */}
-            <div className="container px-4">
-              <IntegrationsSection />
-            </div>
+
+            <Features/>
 
             {/* Testimonials Section */}
             <div className="container px-4" id="testimonials">
