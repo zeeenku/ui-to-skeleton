@@ -20,6 +20,7 @@ import { Demo } from "@/components/demo"
 import { Comparaison } from "@/components/comparaison"
 import { Features } from "@/components/features"
 import { Footer } from "@/components/footer"
+import { AccordionItem } from "@/components/faq-accordion"
 
 export default function Home() {
   const [showEditor, setShowEditor] = useState(false)
@@ -98,33 +99,21 @@ export default function Home() {
               </div>
 
               <div className="max-w-3xl mx-auto space-y-6">
-                <div className="bg-white p-6 rounded-xl shadow-md border border-cyan-100">
-                  <h3 className="text-lg font-semibold mb-2">What is a skeleton loader?</h3>
-                  <p className="text-slate-600">
-                    A skeleton loader is a placeholder that mimics the layout of content while it's loading. It provides
-                    a better user experience than traditional spinners or loading indicators.
-                  </p>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-md border border-cyan-100">
-                  <h3 className="text-lg font-semibold mb-2">Which frameworks are supported?</h3>
-                  <p className="text-slate-600">
-                    UI to Skeleton works with all major frontend frameworks including React, Vue, Angular, and vanilla
-                    HTML/CSS.
-                  </p>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-md border border-cyan-100">
-                  <h3 className="text-lg font-semibold mb-2">Can I customize the animations?</h3>
-                  <p className="text-slate-600">
+                  <AccordionItem title={<h3>What is a skeleton loader?</h3>}>
+                    A skeleton loader is a placeholder that mimics the layout of content while it's loading. It provides a better user experience than traditional spinners or loading indicators.
+                  </AccordionItem>
+
+                  <AccordionItem title={<h3>Which frameworks are supported?</h3>}>
+                    UI to Skeleton works with all major frontend frameworks including React, Vue, Angular, and vanilla HTML/CSS.
+                  </AccordionItem>
+
+                  <AccordionItem title={<h3>Can I customize the animations?</h3>}>
                     Yes! You can customize the animation type, speed, and other properties to match your design system.
-                  </p>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-md border border-cyan-100">
-                  <h3 className="text-lg font-semibold mb-2">Is there an API available?</h3>
-                  <p className="text-slate-600">
-                    Yes, API access is available on the Team plan, allowing you to integrate skeleton generation
-                    directly into your workflow.
-                  </p>
-                </div>
+                  </AccordionItem>
+
+                  <AccordionItem title={<h3>Is there an API available?</h3>}>
+                    Yes, API access is available on the Team plan, allowing you to integrate skeleton generation directly into your workflow.
+                  </AccordionItem>
               </div>
             </div>
 
