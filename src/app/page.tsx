@@ -16,6 +16,7 @@ import StatsSection from "@/components/stats-section"
 import IntegrationsSection from "@/components/integrations-section"
 import FloatingShapes from "@/components/floating-shapes"
 import FeatureCard from "@/components/feature-card"
+import { Header } from "@/components/header"
 
 export default function Home() {
   const [showEditor, setShowEditor] = useState(false)
@@ -29,46 +30,7 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-white to-cyan-50 bg-dot-pattern relative">
       <FloatingShapes />
 
-      <header className="sticky top-0 z-50 glass-effect backdrop-blur-md border-b border-cyan-100 shadow-sm">
-        <div className="container flex h-16 items-center justify-between py-4">
-          <div className="flex items-center gap-2">
-            <Logo className="h-8 w-8 text-cyan-500" />
-            <span className="text-xl font-bold bg-gradient-to-r from-cyan-500 to-cyan-600 bg-clip-text text-transparent">
-              UI to Skeleton
-            </span>
-          </div>
-          <div className="hidden md:flex items-center space-x-6">
-            <Link href="#features" className="text-slate-600 hover:text-cyan-600 transition-colors">
-              Features
-            </Link>
-            <Link href="#pricing" className="text-slate-600 hover:text-cyan-600 transition-colors">
-              Pricing
-            </Link>
-            <Link href="#testimonials" className="text-slate-600 hover:text-cyan-600 transition-colors">
-              Testimonials
-            </Link>
-            <Link href="#faq" className="text-slate-600 hover:text-cyan-600 transition-colors">
-              FAQ
-            </Link>
-          </div>
-          <div className="flex items-center gap-4">
-            <Link
-              href="https://github.com/username/ui-to-skeleton"
-              target="_blank"
-              className="flex items-center gap-2 text-slate-600 hover:text-cyan-600 transition-colors"
-            >
-              <Github className="h-5 w-5" />
-              <span className="hidden sm:inline">GitHub</span>
-            </Link>
-            <Button
-              onClick={() => setShowEditor(true)}
-              className="bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white shadow-md"
-            >
-              Get Started
-            </Button>
-          </div>
-        </div>
-      </header>
+     <Header/>
 
       <main className="flex-1 relative z-10">
         {!showEditor ? (
