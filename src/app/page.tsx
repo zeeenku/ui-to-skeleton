@@ -17,6 +17,7 @@ import FeatureCard from "@/components/feature-card"
 import { Header } from "@/components/header"
 import { Hero } from "@/components/hero"
 import { Demo } from "@/components/demo"
+import { Comparaison } from "@/components/comparaison"
 
 export default function Home() {
   const [showEditor, setShowEditor] = useState(false)
@@ -38,143 +39,10 @@ export default function Home() {
 
             <Hero/>
             {/* Demo Section */}
-            <Demo/>
-
-
-
-            {/* Say Goodbye Section */}
-            <div className="container px-4">
-              <div className="bg-gradient-to-r from-cyan-50 to-white p-8 rounded-xl border border-cyan-100 max-w-4xl mx-auto shadow-lg">
-                <h2 className="text-2xl font-bold text-slate-800 mb-4">Say Goodbye to Ugly Loaders</h2>
-                <p className="text-slate-600 text-lg mb-4">
-                  No more spinning wheels or bouncing dots. Create beautiful, content-aware skeleton loaders that
-                  enhance your user experience in moments, not hours.
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                  <div className="flex items-start gap-3">
-                    <div className="mt-1 bg-red-100 rounded-full p-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="text-red-500"
-                      >
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                      </svg>
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-slate-800">Ugly Spinners</h3>
-                      <p className="text-slate-500 text-sm">Generic loaders that don't match your UI</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="mt-1 bg-green-100 rounded-full p-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="text-green-500"
-                      >
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-slate-800">Beautiful Skeletons</h3>
-                      <p className="text-slate-500 text-sm">Content-aware loaders that match your design</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="mt-1 bg-red-100 rounded-full p-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="text-red-500"
-                      >
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                      </svg>
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-slate-800">Hours of Coding</h3>
-                      <p className="text-slate-500 text-sm">Wasting time on loading states</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="mt-1 bg-green-100 rounded-full p-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="text-green-500"
-                      >
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-slate-800">Moments to Generate</h3>
-                      <p className="text-slate-500 text-sm">Create loaders in seconds, not hours</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="space-y-8">
+              <Demo/>
+              <Comparaison/>
             </div>
-
-            {/* Features Section */}
-            <div className="container px-4" id="features">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold text-gradient mb-4">Powerful Features</h2>
-                <p className="text-slate-600 max-w-2xl mx-auto">
-                  Everything you need to create beautiful skeleton loaders for your applications
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <FeatureCard
-                  title="Fast and Effective"
-                  description="Generate skeleton loaders in seconds. focus on building features, not loading states."
-                  icon={Zap}
-                />
-                <FeatureCard
-                  title="Customizable Results"
-                  description="Tailor your skeletons to match your brand and design system for a more polished loading experiences."
-                  icon={Palette}
-                />
-                <FeatureCard
-                  title="Developer Friendly"
-                  description="Fast and simple, just copy and use in your project, made by developers for developers."
-                  icon={Code}
-                />
-
-
-              </div>
-            </div>
-
             {/* Integrations Section */}
             <div className="container px-4">
               <IntegrationsSection />

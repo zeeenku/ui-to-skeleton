@@ -5,7 +5,6 @@ import { Button } from "./ui/button";
 export function Demo(){
     return (
         <div className="w-full max-w-6xl mx-auto px-4 relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-cyan-600 opacity-20 blur-xl rounded-xl"></div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="relative bg-white rounded-xl shadow-xl overflow-hidden border border-cyan-100 p-6">
                   <div className="absolute top-3 right-3 bg-cyan-500 text-white text-xs px-2 py-1 rounded-full">
