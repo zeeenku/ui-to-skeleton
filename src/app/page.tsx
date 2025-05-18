@@ -133,18 +133,21 @@ export default function Home() {
               <div className="bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-2xl p-8 md:p-12 shadow-xl max-w-5xl mx-auto text-center text-white">
                 <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to transform your loading experience?</h2>
                 <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-                  Join thousands of developers who are creating beautiful skeleton loaders in moments, not hours.
+                  Be part of thousands of developers designing beautiful skeleton loaders in just moments, not hours.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
                     size="lg"
                     onClick={() => setShowEditor(true)}
                     className="bg-white text-cyan-700 hover:bg-cyan-50"
+                    asChild
                   >
-                    Start Building Now
+                    <Link href="/studio">
+                      Get Your Skeleton
+                    </Link>
                   </Button>
-                  <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-                    Schedule a Demo
+                  <Button asChild size="lg" variant="outline" className="border-white text-cyan-700 hover:bg-white/10">
+                    <a href="https://github.com/zeeenku/ui-to-skeleton/issues/new">I have an Issue</a>
                   </Button>
                 </div>
               </div>
