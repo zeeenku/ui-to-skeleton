@@ -53,7 +53,7 @@ export function Hero() {
             className="border-cyan-300 text-cyan-700 hover:bg-cyan-50 hover:text-cyan-800"
             asChild
           >
-            <Link href="/#features">
+            <Link href="/#demo">
               Learn more
             </Link>
           </Button>
