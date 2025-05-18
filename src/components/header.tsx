@@ -33,6 +33,7 @@ export function Header() {
           </Link>
           <Link href="/#" className="text-slate-600 hover:text-cyan-600 transition-colors">
             Support
+            {/* todo: add link */}
           </Link>
         </div>
 
