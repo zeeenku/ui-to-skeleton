@@ -146,8 +146,8 @@ export default function Home() {
                     className="bg-white text-cyan-700 hover:bg-cyan-50"
                     asChild
                   >
-                    <Link href="/studio">
-                      Get Your Skeleton
+                    <Link href="#">
+                      Get Your Skeleton 
                     </Link>
                   </Button>
                   <Button asChild size="lg" variant="outline" className="border-white text-cyan-700 hover:bg-white/10">
