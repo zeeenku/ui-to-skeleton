@@ -40,10 +40,12 @@ export function Hero() {
         <div className="flex gap-4 justify-center mb-8">
           <Button
             size="lg"
-            onClick={() => setShowEditor(true)}
+            asChild
             className="bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white shadow-lg shadow-cyan-500/20 hover:shadow-cyan-600/30 transition-all"
           >
-            Start Building
+            <Link href="/studio">
+              Start Building
+            </Link>
           </Button>
           <Button
             size="lg"
