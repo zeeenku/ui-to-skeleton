@@ -30,6 +30,34 @@ export default function Home() {
     setUsageCount((prev) => prev + 1)
   }, [])
 
+
+  const testimonials = [
+  {
+    name: "Sarah Johnson",
+    role: "Frontend Developer",
+    company: "TechCorp",
+    quote: "UI to Skeleton saved me hours of development time. Now I can create beautiful loading states in seconds!",
+    rating: 5,
+    imageSrc: "/placeholder.svg?height=48&width=48"
+  },
+  {
+    name: "Michael Chen",
+    role: "UI Engineer",
+    company: "DesignLabs",
+    quote: "The customization options are incredible. I can match our brand perfectly and create consistent experiences.",
+    rating: 5,
+    imageSrc: "/placeholder.svg?height=48&width=48"
+  },
+  {
+    name: "Emily Rodriguez",
+    role: "Full Stack Developer",
+    company: "StartupX",
+    quote: "This tool has become an essential part of my workflow. I can't imagine going back to manually coding skeletons.",
+    rating: 4,
+    imageSrc: "/placeholder.svg?height=48&width=48"
+  }
+];
+
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-white to-cyan-50 bg-dot-pattern relative">
       <FloatingShapes />
@@ -55,7 +83,7 @@ export default function Home() {
             <Features/>
 
             {/* Testimonials Section */}
-            <div className="container px-4" id="testimonials">
+            <div className="max-w-6xl  lg:px-16 px-4" id="testimonials">
               <div className="text-center mb-12">
                 <h2 className="text-3xl font-bold text-gradient mb-4">Loved by Developers</h2>
                 <p className="text-slate-600 max-w-2xl mx-auto">
@@ -63,31 +91,18 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <TestimonialCard
-                  name="Sarah Johnson"
-                  role="Frontend Developer"
-                  company="TechCorp"
-                  quote="UI to Skeleton saved me hours of development time. Now I can create beautiful loading states in seconds!"
-                  rating={5}
-                  imageSrc="/placeholder.svg?height=48&width=48"
-                />
-                <TestimonialCard
-                  name="Michael Chen"
-                  role="UI Engineer"
-                  company="DesignLabs"
-                  quote="The customization options are incredible. I can match our brand perfectly and create consistent experiences."
-                  rating={5}
-                  imageSrc="/placeholder.svg?height=48&width=48"
-                />
-                <TestimonialCard
-                  name="Emily Rodriguez"
-                  role="Full Stack Developer"
-                  company="StartupX"
-                  quote="This tool has become an essential part of my workflow. I can't imagine going back to manually coding skeletons."
-                  rating={4}
-                  imageSrc="/placeholder.svg?height=48&width=48"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mx-auto">
+                {testimonials.map((testimonial, index) => (
+                  <TestimonialCard
+                    key={index}
+                    name={testimonial.name}
+                    role={testimonial.role}
+                    company={testimonial.company}
+                    quote={testimonial.quote}
+                    rating={testimonial.rating}
+                    imageSrc={testimonial.imageSrc}
+                  />
+                ))}
               </div>
             </div>
 
