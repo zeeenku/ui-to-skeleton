@@ -3,6 +3,7 @@
 import { Button } from "./ui/button";
 import { useState } from "react";
 import { BackgroundBeamsWithCollision } from "./ui/background-beams-with-collision";
+import Link from "next/link";
 
 export function Hero() {
   const [showEditor, setShowEditor] = useState(false);
@@ -10,7 +11,7 @@ export function Hero() {
   return (
     <div className="relative w-full min-h-screen overflow-hidden">
       {/* Background layer */}
-      <div className="absolute -inset-1 z-0">
+      <div className="absolute -inset-1 z-0 lg:p-16 p-4">
         <BackgroundBeamsWithCollision className="glass-effect backdrop-blur-md" children={undefined} />
       </div>
 
@@ -20,11 +21,11 @@ export function Hero() {
       <div className="relative w-full min-h-screen flex items-center justify-center text-center flex-col z-10 backdrop-blur-md lg:p-16 p-4">
         <div className="inline-block mb-4">
           <div className="bg-cyan-100 text-cyan-800 text-xs font-medium px-3 py-1 rounded-full">
-            ✨ Introducing UI to Skeleton v1.0
+            ✨ Introducing UI to Skeleton (Alpha Release)
           </div>
         </div>
 
-        <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight text-gradient mt-6 mb-6">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-gradient mt-6 mb-6">
           <span className="relative inline-flex sm:inline">
             <span className="bg-gradient-to-r from-cyan-300 to-cyan-500 blur-lg filter opacity-30 w-full h-full absolute inset-0"></span>
             <span className="relative text-gradient">From hours and minutes to moments</span>
@@ -36,7 +37,7 @@ export function Hero() {
           create consistent loading states for a better user experience.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+        <div className="flex gap-4 justify-center mb-8">
           <Button
             size="lg"
             onClick={() => setShowEditor(true)}
@@ -48,14 +49,23 @@ export function Hero() {
             size="lg"
             variant="outline"
             className="border-cyan-300 text-cyan-700 hover:bg-cyan-50 hover:text-cyan-800"
+            asChild
           >
-            Watch Demo
+            <Link href="/#features">
+              Learn more
+            </Link>
           </Button>
         </div>
 
-        <div className="relative mt-6 w-2/3">
-          <div className="absolute -inset-1 blur-xl scale-105 rounded-lg z-0 bg-gradient-to-r from-cyan-300 to-cyan-500 opacity-40"></div>
-          <div className="relative rounded-lg h-[600px] bg-slate-900 z-10"></div>
+        <div className="relative mt-6 lg:w-2/3">
+        {/* todo: needs layout updates after adding real preview video */}
+         <div className="relative rounded-lg border overflow-hidden border-cyan-500 lg:h-[600px] bg-slate-900 z-10">
+            <video className="w-full" autoPlay muted loop>
+              <source src="preview.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+
         </div>
       </div>
     </div>

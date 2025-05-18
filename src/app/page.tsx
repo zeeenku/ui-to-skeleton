@@ -7,12 +7,10 @@ import Image from "next/image"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import CodeEditor from "@/components/code-editor"
-import Logo from "@/components/logo"
 import { useLocalStorage } from "@/hooks/use-local-storage"
 import DemoAnimation from "@/components/demo-animation"
 import TestimonialCard from "@/components/testimonial-card"
 import PricingCard from "@/components/pricing-card"
-import StatsSection from "@/components/stats-section"
 import IntegrationsSection from "@/components/integrations-section"
 import FloatingShapes from "@/components/floating-shapes"
 import FeatureCard from "@/components/feature-card"
@@ -94,10 +92,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Stats Section */}
-            <div className="container px-4">
-              <StatsSection />
-            </div>
+
 
             {/* Say Goodbye Section */}
             <div className="container px-4">
@@ -213,54 +208,22 @@ export default function Home() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                 <FeatureCard
-                  title="Lightning Fast"
-                  description="Generate skeleton loaders in seconds, not hours."
+                  title="Fast and Effective"
+                  description="Generate skeleton loaders in seconds. focus on building features, not loading states."
                   icon={Zap}
                 />
                 <FeatureCard
-                  title="Customizable"
-                  description="Tailor your skeletons to match your brand and design system."
+                  title="Customizable Results"
+                  description="Tailor your skeletons to match your brand and design system for a more polished loading experiences."
                   icon={Palette}
                 />
                 <FeatureCard
                   title="Developer Friendly"
-                  description="Built for developers, by developers. Easy to integrate."
+                  description="Fast and simple, just copy and use in your project, made by developers for developers."
                   icon={Code}
                 />
-                <FeatureCard
-                  title="Time Saving"
-                  description="Focus on building features, not loading states."
-                  icon={Clock}
-                />
-                <FeatureCard
-                  title="Beautiful Results"
-                  description="Create professional, polished loading experiences."
-                  icon={Sparkles}
-                />
-                <FeatureCard
-                  title="Framework Agnostic"
-                  description="Works with React, Vue, Angular, and more."
-                  icon={Layers}
-                />
-                <FeatureCard
-                  title="Reusable Components"
-                  description="Create once, use everywhere in your application."
-                  icon={Repeat}
-                />
-                <FeatureCard
-                  title="Responsive Design"
-                  description="Skeletons that look great on any device."
-                  icon={Smartphone}
-                />
-                <div className="bg-gradient-to-r from-cyan-500 to-cyan-600 p-6 rounded-xl shadow-lg text-white">
-                  <h3 className="text-lg font-semibold mb-2">Pro Features Coming Soon</h3>
-                  <p className="mb-4">
-                    We're constantly adding new features to make your development experience even better.
-                  </p>
-                  <Button variant="secondary" className="bg-white text-cyan-700 hover:bg-cyan-50">
-                    Join Waitlist
-                  </Button>
-                </div>
+
+
               </div>
             </div>
 
@@ -303,64 +266,6 @@ export default function Home() {
                   rating={4}
                   imageSrc="/placeholder.svg?height=48&width=48"
                 />
-              </div>
-            </div>
-
-            {/* Pricing Section */}
-            <div className="container px-4" id="pricing">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold text-gradient mb-4">Simple, Transparent Pricing</h2>
-                <p className="text-slate-600 max-w-2xl mx-auto">Start for free, upgrade when you need more features</p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <PricingCard
-                  title="Free"
-                  price="Free"
-                  description="Perfect for getting started with skeleton loaders"
-                  features={[
-                    "Basic skeleton generation",
-                    "5 skeleton templates",
-                    "Standard customization options",
-                    "Community support",
-                  ]}
-                  ctaText="Get Started"
-                />
-                <PricingCard
-                  title="Pro"
-                  price="$9"
-                  description="For professional developers who need more options"
-                  features={[
-                    "Advanced skeleton generation",
-                    "Unlimited templates",
-                    "Advanced customization",
-                    "Export to multiple frameworks",
-                    "Priority support",
-                  ]}
-                  isPopular={true}
-                  ctaText="Upgrade to Pro"
-                />
-                <PricingCard
-                  title="Team"
-                  price="$29"
-                  description="For teams working on multiple projects"
-                  features={[
-                    "Everything in Pro",
-                    "Team collaboration",
-                    "Shared templates",
-                    "Custom branding",
-                    "API access",
-                    "Dedicated support",
-                  ]}
-                  ctaText="Contact Sales"
-                />
-              </div>
-
-              <div className="mt-12 text-center">
-                <p className="text-slate-500 mb-4">Need a custom plan for your enterprise?</p>
-                <Button variant="outline" className="border-cyan-300 text-cyan-700 hover:bg-cyan-50">
-                  Contact Us
-                </Button>
               </div>
             </div>
 
@@ -424,23 +329,23 @@ export default function Home() {
               </div>
             </div>
 
-            <Alert className="max-w-lg bg-cyan-50 border-cyan-200 text-cyan-800">
+            {/* <Alert className="max-w-lg bg-cyan-50 border-cyan-200 text-cyan-800">
               <AlertDescription>
                 This is the first version of UI to Skeleton. More features will be added in future updates.
               </AlertDescription>
-            </Alert>
+            </Alert> */}
           </div>
         ) : (
           <CodeEditor />
         )}
       </main>
 
-      <footer className="border-t py-12 bg-white relative z-10">
+      <footer className="border-t py-12 mt-5 bg-white relative z-10">
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="md:col-span-2">
               <div className="flex items-center gap-2 mb-4">
-                <Logo className="h-6 w-6 text-cyan-500" />
+                <Image src="./logo.svg" width={24} height={24} alt="UI to Skeleton Demo" className="h-6 w-6 text-cyan-500" />
                 <span className="text-lg font-bold bg-gradient-to-r from-cyan-500 to-cyan-600 bg-clip-text text-transparent">
                   UI to Skeleton
                 </span>
