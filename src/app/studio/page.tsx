@@ -31,7 +31,9 @@ import Head from "next/head"
 //todo: use react query for generated count
 // Dynamically import Monaco Editor to avoid SSR issues
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false })
-
+const getOpenIssueLInk = () => {
+  return "https://github.com/zeeenku/ui-to-skeleton/issues/new";
+}
 export default function CodeEditor() {
   // Get state and actions from Zustand store
 
@@ -187,7 +189,7 @@ export default function CodeEditor() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => window.open("https://github.com/username/ui-to-skeleton/issues/new", "_blank")}
+                      onClick={() => window.open(getOpenIssueLInk(), "_blank")}
                       className="bg-white/80 backdrop-blur-sm border-slate-200/50 hover:bg-cyan-50/50 hover:border-cyan-200/50 transition-all duration-200"
                     >
                       <AlertTriangle className="h-4 w-4 mr-1 text-cyan-600" /> Report Issue
