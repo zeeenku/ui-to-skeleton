@@ -4,8 +4,15 @@ import { persist } from "zustand/middleware"
 // Add these to your existing store types
 type LayoutMode = "split" | "editor" | "preview"
 
+type SkeletonConfig = {
+  color: string;
+  intensity: number;
+  defaultBorderRadius: string;
+};
+
 type SkeletonStore = {
   // UI Format and Styling Options
+  skeletonConfig: SkeletonConfig;
   uiFormat: string
   stylingFormat: string
   exportFormat: string
@@ -26,6 +33,7 @@ type SkeletonStore = {
   setSkeletonModified: (modified: boolean) => void
   setCopied: (copied: boolean) => void
   setIsValid: (isValid: boolean) => void
+  setSkeletonConfig: (config: Partial<SkeletonConfig>) => void
 
   // Skeleton Configuration
   skeletonColor: string
@@ -120,6 +128,11 @@ export const useSkeletonStore = create<SkeletonStore>()(
     (set, get) => ({
       // UI Format and Styling Options
       uiFormat: "jsx",
+      skeletonConfig:{
+        color: "cyan",
+        intensity: 300,
+        defaultBorderRadius:"rounded-md",
+      },
       stylingFormat: "tailwind",
       exportFormat: "jsx",
       setUiFormat: (format) => {
@@ -141,6 +154,13 @@ export const useSkeletonStore = create<SkeletonStore>()(
       skeletonModified: false,
       copied: false,
       isValid: true,
+      setSkeletonConfig: (config) =>
+    set((state) => ({
+      skeletonConfig: {
+        ...state.skeletonConfig,
+        ...config,
+      },
+    })),
       setUiCode: (code) => {
         const { skeletonGenerated, skeletonModified } = get()
         set({ uiCode: code })

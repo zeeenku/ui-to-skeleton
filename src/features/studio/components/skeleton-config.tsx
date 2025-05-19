@@ -1,8 +1,8 @@
 "use client"
 
-import React, { useState } from "react"
 import { Zap } from "lucide-react"
 import { AutocompleteInput } from "@/components/ui/autocomplete"
+import { useSkeletonStore } from "@/lib/store"
 
 export default function SkeletonConfiguration() {
   const colors = [
@@ -13,17 +13,7 @@ export default function SkeletonConfiguration() {
   const intensities = ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"]
   const borderSizes = ["rounded-none", "rounded-sm", "rounded-md", "rounded-lg", "rounded-full"]
 
-  const [skeletonColor, setSkeletonColor] = useState("cyan")
-  const [colorInput, setColorInput] = useState("cyan")
-
-  const [maxColorDegree, setMaxColorDegree] = useState(200)
-  const [intensityInput, setIntensityInput] = useState("200")
-
-  const [skeletonBorder, setSkeletonBorder] = useState("rounded-md")
-  const [borderInput, setBorderInput] = useState("rounded-md")
-
-  const [skeletonBorderColor, setSkeletonBorderColor] = useState("slate")
-  const [borderColorInput, setBorderColorInput] = useState("slate")
+  const { skeletonConfig, setSkeletonConfig } = useSkeletonStore()
 
   return (
     <div className="w-full relative mb-8 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-slate-200/50 overflow-visible transition-all duration-300 hover:shadow-xl">
@@ -40,12 +30,13 @@ export default function SkeletonConfiguration() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:max-w-5xl">
           <AutocompleteInput
             label="Color"
-            value={colorInput}
-            onChange={setColorInput}
+            value={skeletonConfig.color}
+            onChange={(val) => {
+              setSkeletonConfig({ color: val })
+            }}
             suggestions={colors}
             onSelect={(val) => {
-              setColorInput(val)
-              setSkeletonColor(val)
+              setSkeletonConfig({ color: val })
             }}
             placeholder="Enter color"
             showColorDot
@@ -53,30 +44,28 @@ export default function SkeletonConfiguration() {
 
           <AutocompleteInput
             label="Intensity"
-            value={intensityInput}
+            value={skeletonConfig.intensity.toString()}
             onChange={(val) => {
               if (/^\d*$/.test(val)) {
-                setIntensityInput(val)
-                setMaxColorDegree(Number(val))
+                setSkeletonConfig({ intensity: Number(val) })
               }
             }}
             suggestions={intensities}
             onSelect={(val) => {
-              setIntensityInput(val)
-              setMaxColorDegree(Number(val))
+              setSkeletonConfig({ intensity: Number(val) })
             }}
             placeholder="Enter intensity"
           />
 
           <AutocompleteInput
-          
             label="Default Border Radius"
-            value={borderInput}
-            onChange={setBorderInput}
+            value={skeletonConfig.defaultBorderRadius}
+            onChange={(val) => {
+              setSkeletonConfig({ defaultBorderRadius: val })
+            }}
             suggestions={borderSizes}
             onSelect={(val) => {
-              setBorderInput(val)
-              setSkeletonBorder(val)
+              setSkeletonConfig({ defaultBorderRadius: val })
             }}
             placeholder="Enter border radius"
           />
