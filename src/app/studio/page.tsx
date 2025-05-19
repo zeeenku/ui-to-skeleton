@@ -26,6 +26,7 @@ import { useEffect } from "react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import SkeletonConfiguration from "@/features/studio/components/skeleton-config"
+import Head from "next/head"
 
 // Dynamically import Monaco Editor to avoid SSR issues
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false })
@@ -135,6 +136,9 @@ export default function CodeEditor() {
 
   return (
     <div className="flex flex-col h-full bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
+      <Head>
+          <script src="https://cdn.tailwindcss.com"></script>
+      </Head>
       <Header/>
 
       <div className="container mx-auto px-4 py-6">
