@@ -1,19 +1,23 @@
-"use client"
+"use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useSkeletonStore } from "@/lib/store"
 import dynamic from "next/dynamic"
+import * as monaco from 'monaco-editor';
 
 import { toast } from "sonner"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import { useLocalStorage } from "@/hooks/use-local-storage"
+import { UpdateUITabAlert } from "./components/code-tab-update-alert"
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false })
 
 
 type CodeFileTabConfig = {
     format : string;
-    styling: string;
+    styling: string; 
+    isError: boolean;
 };
 
 const DEFAULT_HTML_CODE = `<div class="bg-white p-4 rounded-lg shadow-md">
@@ -39,51 +43,17 @@ const DEFAULT_HTML_CODE = `<div class="bg-white p-4 rounded-lg shadow-md">
   </div>
 </div>`
 
-export function Editors() {
-  const uiConfigFormats = ["html"];
-  const uiConfigStylings = ["tailwind"];
-  const skeletonConfigFormats = ["html", "jsx"];
-  const skeletonConfigStylings = ["tailwind"];
 
-  const [uiCode, setUiCode] = useState(DEFAULT_HTML_CODE);
-  const [skeletonCode, setSkeletonCode] = useState(DEFAULT_HTML_CODE);
-  const [isSkeletonUpdated, setIsSkeletonUpdated] = useState(false);
-  const [isValid, setIsValid] = useState(true);
-  const [activeCodeTab, setActiveCodeTab] = useState("ui");
+const uiConfigFormats = ["html"];
+const uiConfigStylings = ["tailwind"];
+const skeletonConfigFormats = ["html", "jsx"];
+const skeletonConfigStylings = ["tailwind"];
 
-  const [uiConfig, setUiConfig] = useState<CodeFileTabConfig>({
-    format: uiConfigFormats[0],
-    styling: uiConfigStylings[0],
-  });
-
-  const [skeletonConfig, setSkeletonConfig] = useState<CodeFileTabConfig>({
-    format: skeletonConfigFormats[0],
-    styling: skeletonConfigStylings[0],
-  });
-
-  // Load from localStorage after mount
-  useEffect(() => {
-    const uiCodeLocal = localStorage.getItem("ui_code");
-    const skeletonCodeLocal = localStorage.getItem("skeleton_code");
-
-    if (uiCodeLocal) setUiCode(uiCodeLocal);
-    if (skeletonCodeLocal) setSkeletonCode(skeletonCodeLocal);
-  }, []);
-
-  useEffect(() => {
-    if (!isSkeletonUpdated) {
-      setSkeletonCode(uiCode);
-    } else {
-      toast.warning("Skeleton has been modified. Review before overriding.");
-    }
-  }, [uiCode]);
-
-  const validateHtml = (htmlString: string) => {
+const validateFormat = (code: string, type: string) => {
     try {
       if (typeof window !== "undefined") {
-        const doc = new DOMParser().parseFromString(htmlString, "text/html");
-        const errors = doc.querySelectorAll("parsererror");
-        return errors.length === 0;
+        const doc = new DOMParser().parseFromString(code, "text/html");
+        return doc.querySelectorAll("parsererror").length === 0;
       }
       return true;
     } catch {
@@ -91,41 +61,118 @@ export function Editors() {
     }
   };
 
-  const handleEditorChange = (value: string | undefined, type: string) => {
+  const generateSkeleton = (str: string) => {
+    return str;
+  }
+export function Editors() {
+  const [uiCode, setUiCode] = useLocalStorage<string>("ui_code", DEFAULT_HTML_CODE);
+   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+
+  const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
+    editorRef.current = editor;
+  };
+
+  const [skeletonCode, setSkeletonCode] = useLocalStorage<string>("skeleton_code", generateSkeleton(uiCode));
+  const [isSkeletonUpdated, setIsSkeletonUpdated] = useState(false);
+  const [isAlertShown, setIsAlertShown] = useState(false);
+  const [activeCodeTab, setActiveCodeTab] = useState("ui");
+  
+
+    const defaultUiConfig = {
+        format: uiConfigFormats[0],
+        styling: uiConfigStylings[0],
+        isError: false,
+    };
+
+
+    const defaultSkeletonConfig = {
+    format: skeletonConfigFormats[0],
+    styling: skeletonConfigStylings[0],
+    isError: false,
+    };
+
+    //todo: will be related more to zustand
+  const [uiConfig, setUiConfig] = useLocalStorage<CodeFileTabConfig>("uiConfig", defaultUiConfig);
+
+  const [skeletonConfig, setSkeletonConfig] = useLocalStorage<CodeFileTabConfig>("skeletonConfig", defaultSkeletonConfig);
+
+
+
+  // Config setters
+  const setUiConfigFormat = (value: string) =>
+    setUiConfig((prev) => ({ ...prev, format: value }));
+
+  const setUiConfigStyling = (value: string) =>
+    setUiConfig((prev) => ({ ...prev, styling: value }));
+
+  const setSkeletonConfigFormat = (value: string) =>
+    setSkeletonConfig((prev) => ({ ...prev, format: value }));
+
+  const setSkeletonConfigStyling = (value: string) =>
+    setSkeletonConfig((prev) => ({ ...prev, styling: value }));
+
+
+
+  const [leftUICode,setLeftUICode] = useState("");
+  const handleEditorChange = (value: string | undefined, type: string, forceUpdate= false) => {
     const newCode = value || "";
+
+    
     if (type === "ui") {
-      if (isSkeletonUpdated) {
-        toast.warning("Skeleton already modified. Please confirm overwrite.");
+      const isValid = validateFormat(newCode, type);
+      if (!isValid) {
+        setUiConfig((prev) => ({ ...prev, isError: true }));
         return;
       }
+      setUiConfig((prev) => ({ ...prev, isError: false }));
+
+      if (isSkeletonUpdated && !forceUpdate) {
+        setIsAlertShown(true);
+        setLeftUICode(newCode);
+        return;
+      }else{
+        setIsSkeletonUpdated(false);
+      }
+
       setUiCode(newCode);
-      setIsValid(validateHtml(newCode));
+      setSkeletonCode(generateSkeleton(newCode)); // todo: add generation logic 
     } else {
+      const isValid = validateFormat(newCode, type);
+      if (!isValid) {
+        setSkeletonConfig((prev) => ({ ...prev, isError: true }));
+        return;
+      }
+
+      setSkeletonConfig((prev) => ({ ...prev, isError: false }));
       setIsSkeletonUpdated(true);
       setSkeletonCode(newCode);
     }
   };
 
-  // UI Config handlers
-  const setUiConfigFormat = (value: string) => {
-    setUiConfig((prev) => ({ ...prev, format: value }));
-  };
 
-  const setUiConfigStyling = (value: string) => {
-    setUiConfig((prev) => ({ ...prev, styling: value }));
-  };
+    const handleUserUpdateDecision = (choice: "continue" | "cancel") => {
+        if(choice === "continue"){
+            handleEditorChange(leftUICode, "ui", true);
+            setLeftUICode("");
+        }
+        else{
+            if (editorRef.current) {
+                editorRef.current?.setValue(uiCode);
+            }
+        }
+    }
 
-  // Skeleton Config handlers
-  const setSkeletonConfigFormat = (value: string) => {
-    setSkeletonConfig((prev) => ({ ...prev, format: value }));
-  };
 
-  const setSkeletonConfigStyling = (value: string) => {
-    setSkeletonConfig((prev) => ({ ...prev, styling: value }));
-  };
+
 
   return (
     <div className="flex flex-col">
+
+          <UpdateUITabAlert
+        open={isAlertShown}
+        onOpenChange={(open)=>setIsAlertShown(open)}
+        onDecision={handleUserUpdateDecision}
+      />
       <div className="bg-[#1e1e1e] rounded-xl overflow-hidden border border-[#1e1e1e] shadow-lg transition-all duration-300 hover:shadow-xl h-[calc(100vh-420px)]">
         <Tabs value={activeCodeTab} onValueChange={setActiveCodeTab} className="h-full bg-[#1e1e1e] border border-[#1e1e1e]">
           <div className="border-none p-3 border-b bg-[#2d2d30] text-sm text-white flex items-center justify-between">
@@ -204,6 +251,7 @@ export function Editors() {
               height="100%"
               language="html"
               theme="vs-dark"
+              onMount={handleEditorDidMount}
               value={uiCode}
               onChange={(value) => handleEditorChange(value, "ui")}
               options={{

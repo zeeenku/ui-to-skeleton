@@ -36,8 +36,8 @@ const getOpenIssueLInk = () => {
 }
 export default function CodeEditor() {
   // Get state and actions from Zustand store
-  const [uiCode, setUiCode] = useState(localStorage.getItem("ui_code")?? "");
-    const [skeletonCode, setSkeletonCode] = useState(localStorage.getItem("skeleton_code")?? "");
+  const [uiCode, setUiCode] = useState("");
+    const [skeletonCode, setSkeletonCode] = useState("");
     const [isSkeletonUpdated, setIsSKeletonUpdated] = useState(false);
     const [isValid, setIsValid] = useState(true);
     const [uiFormat, setUiFormat] = useState("html");
@@ -72,12 +72,6 @@ export default function CodeEditor() {
     copySkeletonCode,
   } = useSkeletonStore()
 
-  useEffect(() => {
-    if (showToast) {
-      toast.success(toastMessage || "Success!")
-      setShowToast(false) // Reset the flag after showing
-    }
-  }, [showToast, toastMessage, setShowToast])
 
   // Validate HTML
   const validateHtml = (htmlString: string) => {

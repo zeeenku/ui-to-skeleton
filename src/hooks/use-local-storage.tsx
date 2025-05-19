@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useCallback } from "react";
 
 export function useLocalStorage<T>(key: string, initialValue: T) {
   // State to store our value
@@ -8,16 +9,19 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
 
   // Initialize on first render
   useEffect(() => {
-    try {
-      const item = window.localStorage.getItem(key)
-      if (item) {
-        setStoredValue(JSON.parse(item))
-      }
-    } catch (error) {
-      console.log(error)
-      setStoredValue(initialValue)
+  try {
+    const item = window.localStorage.getItem(key)
+    if (item !== null) {
+      setStoredValue(JSON.parse(item))
+    } else {
+      // fallback only if localStorage has no value
+      window.localStorage.setItem(key, JSON.stringify(initialValue))
     }
-  }, [key, initialValue])
+  } catch (error) {
+    console.log(error)
+  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [key]) 
 
   // Return a wrapped version of useState's setter function that
   // persists the new value to localStorage
@@ -40,3 +44,4 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
 
   return [storedValue, setValue] as const
 }
+
