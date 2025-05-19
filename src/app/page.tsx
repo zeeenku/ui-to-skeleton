@@ -62,9 +62,9 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-white to-cyan-50 bg-dot-pattern relative">
       <FloatingShapes />
 
-     <Header/>
+     <Header isHome={true} />
 
-      <main className="w-full mt-16 flex-1 relative z-10">
+      <main className="w-full flex-1 relative z-10">
         {!showEditor ? (
           <div className="w-full flex flex-col items-center justify-center space-y-24">
 

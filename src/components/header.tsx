@@ -7,7 +7,9 @@ import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 
-export function Header() {
+
+
+export function Header({isHome = false} : {isHome?: boolean}) {
  const [showHeader, setShowHeader] = useState(true);
   let lastScrollY = 0; 
 
@@ -56,7 +58,8 @@ const debounce = <T extends (...args: any[]) => void>(func: T, wait: number) => 
 
 
   return (
-    <header className={`${showHeader ? "top-0" : "-top-16" }  duration-200 w-full fixed z-50 glass-effect backdrop-blur-md border-b border-cyan-100 shadow-sm`}>
+    <div className={`${showHeader ? "top-0" : "-top-16" } duration-200 w-full sticky z-50 `} >
+    <header  className="glass-effect backdrop-blur-md border-b border-cyan-100 shadow-sm">
       <div className="flex h-16 items-center justify-between p-4 lg:px-16">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
@@ -69,6 +72,8 @@ const debounce = <T extends (...args: any[]) => void>(func: T, wait: number) => 
         </Link>
 
         {/* Desktop Nav */}
+        {isHome ?
+        <>
         <div className="hidden lg:flex items-center space-x-6">
           <Link href="/#features" className="text-slate-600 hover:text-cyan-600 transition-colors">
             Features
@@ -142,8 +147,28 @@ const debounce = <T extends (...args: any[]) => void>(func: T, wait: number) => 
 
         </div>
 
-       
+            </> : 
+            <Button variant="ghost" className="hover:bg-white" size="sm" asChild>
+          <Link
+            href="https://github.com/zeeenku/ui-to-skeleton"
+            target="_blank"
+            className="flex items-center gap-2 text-slate-600 hover:text-cyan-600 transition-colors"
+          >
+            <Github className="h-5 w-5" />
+            <span className="hidden lg:inline">GitHub</span>
+          </Link>
+          </Button>
+          }
+
       </div>
     </header>
+
+    {/* Ad Banner */}
+    { !isHome &&  <div className="bg-gradient-to-r from-cyan-500/10 to-cyan-600/10 backdrop-blur-sm p-3 text-center text-sm text-slate-700 border-b border-cyan-200/30">
+      <span className="font-medium">Sponsored:</span> Try our new premium templates for advanced skeleton loaders
+    </div>
+     }
+    
+    </div>
   )
 }
