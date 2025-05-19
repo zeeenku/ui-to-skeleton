@@ -54,6 +54,31 @@ const skeletonConfigFormats = ["html", "jsx"];
 const skeletonConfigStylings = ["tailwind"];
 
 
+// Use correct typing structure for custom rules
+const noScriptTagRule = {
+  id: 'no-script-tag',
+  description: 'Disallow use of <script> tags',
+  // Match HTMLHint's expected signature exactly
+  init(parser: any, reporter: any, options?: unknown) {
+    const rule = this;
+    parser.addListener('tagstart', (event: any) => {
+      if (event.tagName.toLowerCase() === 'script') {
+        reporter.error(
+          'The <script> tag is not allowed.',
+          event.line,
+          event.col,
+          rule,
+          event.raw
+        );
+      }
+    });
+  }
+};
+
+// Register the rule globally
+HTMLHint.addRule(noScriptTagRule);
+
+// Validation function
 const validateFormat = async (html: string, type: string) => {
   const rules = {
     "tagname-lowercase": true,
@@ -64,17 +89,13 @@ const validateFormat = async (html: string, type: string) => {
     "id-unique": true,
     "src-not-empty": true,
     "attr-no-duplication": true,
+    "no-script-tag": true // ✅ Our custom rule
   };
 
   const results = await HTMLHint.verify(html, rules);
-  console.log(results)
   return results;
-//   return {
-//     isValid: results.length === 0,
-//     errors: results,
-//   };
-
 };
+
 
   const generateSkeleton = (str: string) => {
     return str;
