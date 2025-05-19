@@ -11,7 +11,8 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
   useEffect(() => {
   try {
     const item = window.localStorage.getItem(key)
-    if (item !== null) {
+  
+    if (item !== null && JSON.parse(item).trim().length > 0) {
       setStoredValue(JSON.parse(item))
     } else {
       // fallback only if localStorage has no value

@@ -1,15 +1,19 @@
 "use client";
+import { HTMLHint } from "htmlhint";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useSkeletonStore } from "@/lib/store"
 import dynamic from "next/dynamic"
 import * as monaco from 'monaco-editor';
+import htmlValidator from 'html-validator';
 
 import { toast } from "sonner"
 import { useEffect, useRef, useState } from "react"
 import { useLocalStorage } from "@/hooks/use-local-storage"
 import { UpdateUITabAlert } from "./components/code-tab-update-alert"
+import { Copy } from "lucide-react";
+import { Hint } from "htmlhint/types";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false })
 
@@ -17,7 +21,7 @@ const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false 
 type CodeFileTabConfig = {
     format : string;
     styling: string; 
-    isError: boolean;
+    errors: Hint[];
 };
 
 const DEFAULT_HTML_CODE = `<div class="bg-white p-4 rounded-lg shadow-md">
@@ -49,17 +53,28 @@ const uiConfigStylings = ["tailwind"];
 const skeletonConfigFormats = ["html", "jsx"];
 const skeletonConfigStylings = ["tailwind"];
 
-const validateFormat = (code: string, type: string) => {
-    try {
-      if (typeof window !== "undefined") {
-        const doc = new DOMParser().parseFromString(code, "text/html");
-        return doc.querySelectorAll("parsererror").length === 0;
-      }
-      return true;
-    } catch {
-      return false;
-    }
+
+const validateFormat = async (html: string, type: string) => {
+  const rules = {
+    "tagname-lowercase": true,
+    "attr-value-double-quotes": true,
+    "doctype-first": false,
+    "tag-pair": true,
+    "spec-char-escape": false,
+    "id-unique": true,
+    "src-not-empty": true,
+    "attr-no-duplication": true,
   };
+
+  const results = await HTMLHint.verify(html, rules);
+  console.log(results)
+  return results;
+//   return {
+//     isValid: results.length === 0,
+//     errors: results,
+//   };
+
+};
 
   const generateSkeleton = (str: string) => {
     return str;
@@ -81,14 +96,14 @@ export function Editors() {
     const defaultUiConfig = {
         format: uiConfigFormats[0],
         styling: uiConfigStylings[0],
-        isError: false,
+        errors: [],
     };
 
 
     const defaultSkeletonConfig = {
     format: skeletonConfigFormats[0],
     styling: skeletonConfigStylings[0],
-    isError: false,
+    errors: [],
     };
 
     //todo: will be related more to zustand
@@ -114,36 +129,40 @@ export function Editors() {
 
 
   const [leftUICode,setLeftUICode] = useState("");
-  const handleEditorChange = (value: string | undefined, type: string, forceUpdate= false) => {
-    const newCode = value || "";
-
-    
+  const handleEditorChange = async (value: string | undefined, type: string, forceUpdate= false) => {
+        const newCode = value || "";
+    if(leftUICode && !forceUpdate){
+        setLeftUICode("")
+        setUiCode(newCode);
+        return;
+    }
     if (type === "ui") {
-      const isValid = validateFormat(newCode, type);
-      if (!isValid) {
-        setUiConfig((prev) => ({ ...prev, isError: true }));
+      const errors = await validateFormat(newCode, type);
+      if (errors.length > 0) {
+        setUiConfig((prev) => ({ ...prev, errors: errors }));
         return;
       }
-      setUiConfig((prev) => ({ ...prev, isError: false }));
+      setUiConfig((prev) => ({ ...prev, errors: [] }));
 
       if (isSkeletonUpdated && !forceUpdate) {
         setIsAlertShown(true);
         setLeftUICode(newCode);
         return;
-      }else{
-        setIsSkeletonUpdated(false);
       }
 
+      setIsSkeletonUpdated(false);
+      setIsAlertShown(false);
       setUiCode(newCode);
       setSkeletonCode(generateSkeleton(newCode)); // todo: add generation logic 
+      setSkeletonConfig((prev) => ({ ...prev, errors: [] }));
     } else {
-      const isValid = validateFormat(newCode, type);
-      if (!isValid) {
-        setSkeletonConfig((prev) => ({ ...prev, isError: true }));
+      const errors = await validateFormat(newCode, type);
+      if (errors.length > 0) {
+        setSkeletonConfig((prev) => ({ ...prev, errors: errors }));
         return;
       }
 
-      setSkeletonConfig((prev) => ({ ...prev, isError: false }));
+      setSkeletonConfig((prev) => ({ ...prev, errors: errors }));
       setIsSkeletonUpdated(true);
       setSkeletonCode(newCode);
     }
@@ -158,11 +177,23 @@ export function Editors() {
         else{
             if (editorRef.current) {
                 editorRef.current?.setValue(uiCode);
+                setLeftUICode("")
+
+                //trigger update on handle func
             }
         }
+        setIsAlertShown(false)
+
     }
 
+const [codeCopied, setCodeCopied] = useState<"ui"|"skeleton"|null>(null);
 
+  const handleCopy = (str: string, type: "ui" |"skeleton") => {
+    navigator.clipboard.writeText(str).then(() => {
+      setCodeCopied(type);
+      setTimeout(() => setCodeCopied(null), 2000);
+    });
+  };
 
 
   return (
@@ -173,7 +204,7 @@ export function Editors() {
         onOpenChange={(open)=>setIsAlertShown(open)}
         onDecision={handleUserUpdateDecision}
       />
-      <div className="bg-[#1e1e1e] rounded-xl overflow-hidden border border-[#1e1e1e] shadow-lg transition-all duration-300 hover:shadow-xl h-[calc(100vh-420px)]">
+      <div className="bg-[#1e1e1e] overflow-hidden rounded-xl border border-[#1e1e1e] shadow-lg transition-all duration-300 hover:shadow-xl h-[calc(100dvh-4rem)]">
         <Tabs value={activeCodeTab} onValueChange={setActiveCodeTab} className="h-full bg-[#1e1e1e] border border-[#1e1e1e]">
           <div className="border-none p-3 border-b bg-[#2d2d30] text-sm text-white flex items-center justify-between">
             <TabsList className="grid w-48 grid-cols-2 bg-[#3e3e42]">
@@ -246,9 +277,23 @@ export function Editors() {
             </div>
           </div>
 
-          <TabsContent value="ui" className="h-screen m-0 py-2">
+          <TabsContent value="ui" className="m-0">
+            <div className="flex items-center px-2 pb-3 justify-between">
+                <div className="text-red-500  text-xs rounded-md py-1 px-2 font-semibold">
+                    { uiConfig.errors?.[0]?.message }
+                </div>
+
+                <button
+                    onClick={() => handleCopy(uiCode,"ui")}
+                    className="ml-4 flex justify-center items-center space-x-1 bg-[#3e3e42] rounded-md py-1 px-2 text-white text-xs"
+                >
+                    <Copy className="w-3 h-3"/>
+                    <span>{codeCopied == "ui" ? 'copied!' : 'copy'}</span>
+                </button>
+            </div>
+            <div className="h-[calc(100dvh-10rem)]">
             <MonacoEditor
-              height="100%"
+              height="97%"
               language="html"
               theme="vs-dark"
               onMount={handleEditorDidMount}
@@ -262,23 +307,39 @@ export function Editors() {
                 automaticLayout: true,
               }}
             />
+            </div>
           </TabsContent>
 
-          <TabsContent value="skeleton" className="h-screen m-0 py-2">
-            <MonacoEditor
-              height="100%"
-              language="html"
-              theme="vs-dark"
-              value={skeletonCode}
-              onChange={(value) => handleEditorChange(value, "skeleton")}
-              options={{
-                minimap: { enabled: false },
-                scrollBeyondLastLine: false,
-                fontSize: 14,
-                wordWrap: "on",
-                automaticLayout: true,
-              }}
-            />
+          <TabsContent value="skeleton" className="m-0">
+              <div className="flex items-center px-2 pb-3 justify-between">
+                <div className="text-red-500  text-xs rounded-md py-1 px-2 font-semibold">
+                    { skeletonConfig.errors?.[0]?.message }
+                </div>
+
+                <button
+                    onClick={() => handleCopy(skeletonCode,"ui")}
+                    className="ml-4 flex justify-center items-center space-x-1 bg-[#3e3e42] rounded-md py-1 px-2 text-white text-xs"
+                >
+                    <Copy className="w-3 h-3"/>
+                    <span>{codeCopied == "ui" ? 'copied!' : 'copy'}</span>
+                </button>
+            </div>
+            <div className="h-[calc(100dvh-10rem)]">
+                <MonacoEditor
+                height="97%"
+                language="html"
+                theme="vs-dark"
+                value={skeletonCode}
+                onChange={(value) => handleEditorChange(value, "skeleton")}
+                options={{
+                    minimap: { enabled: false },
+                    scrollBeyondLastLine: false,
+                    fontSize: 14,
+                    wordWrap: "on",
+                    automaticLayout: true,
+                }}
+                />
+            </div>
           </TabsContent>
         </Tabs>
       </div>
