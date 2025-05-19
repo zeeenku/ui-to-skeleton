@@ -1,4 +1,5 @@
 import { create } from "zustand"
+import { persist } from "zustand/middleware"
 
 type SkeletonStore = {
   // UI Format and Styling Options
@@ -10,14 +11,16 @@ type SkeletonStore = {
   setExportFormat: (format: string) => void
 
   // Code state
-  code: string
+  uiCode: string
   skeletonCode: string
   skeletonGenerated: boolean
+  skeletonModified: boolean
   copied: boolean
   isValid: boolean
-  setCode: (code: string) => void
+  setUiCode: (code: string) => void
   setSkeletonCode: (code: string) => void
   setSkeletonGenerated: (generated: boolean) => void
+  setSkeletonModified: (modified: boolean) => void
   setCopied: (copied: boolean) => void
   setIsValid: (isValid: boolean) => void
 
@@ -35,16 +38,28 @@ type SkeletonStore = {
 
   // UI State
   activeTab: string
+  activeCodeTab: string
   fullPreview: boolean
+  showEditors: boolean
   generatedCount: number
   previewDevice: string
+  shareDialogOpen: boolean
+  showToast: boolean
+  toastMessage: string
+  unsavedChangesAlert: boolean
   setActiveTab: (tab: string) => void
+  setActiveCodeTab: (tab: string) => void
   setFullPreview: (preview: boolean) => void
+  setShowEditors: (show: boolean) => void
   incrementGeneratedCount: () => void
   setPreviewDevice: (device: string) => void
+  setShareDialogOpen: (open: boolean) => void
+  setShowToast: (show: boolean, message?: string) => void
+  setUnsavedChangesAlert: (show: boolean) => void
 
   // Actions
   generateSkeleton: () => void
+  copySkeletonCode: () => void
 }
 
 const DEFAULT_HTML_CODE = `<div class="bg-white p-4 rounded-lg shadow-md">
@@ -93,71 +108,99 @@ const DEFAULT_JSX_CODE = `<div className="bg-white p-4 rounded-lg shadow-md">
   </div>
 </div>`
 
-export const useSkeletonStore = create<SkeletonStore>((set, get) => ({
-  // UI Format and Styling Options
-  uiFormat: "jsx",
-  stylingFormat: "tailwind",
-  exportFormat: "jsx",
-  setUiFormat: (format) => {
-    set({ uiFormat: format })
-    // Update code when UI format changes
-    if (format === "html") {
-      set({ code: DEFAULT_HTML_CODE })
-    } else {
-      set({ code: DEFAULT_JSX_CODE })
-    }
-  },
-  setStylingFormat: (format) => set({ stylingFormat: format }),
-  setExportFormat: (format) => set({ exportFormat: format }),
+export const useSkeletonStore = create<SkeletonStore>()(
+  persist(
+    (set, get) => ({
+      // UI Format and Styling Options
+      uiFormat: "jsx",
+      stylingFormat: "tailwind",
+      exportFormat: "jsx",
+      setUiFormat: (format) => {
+        set({ uiFormat: format })
+        // Update code when UI format changes
+        if (format === "html") {
+          set({ uiCode: DEFAULT_HTML_CODE })
+        } else {
+          set({ uiCode: DEFAULT_JSX_CODE })
+        }
+      },
+      setStylingFormat: (format) => set({ stylingFormat: format }),
+      setExportFormat: (format) => set({ exportFormat: format }),
 
-  // Code state
-  code: DEFAULT_JSX_CODE,
-  skeletonCode: "",
-  skeletonGenerated: false,
-  copied: false,
-  isValid: true,
-  setCode: (code) => set({ code }),
-  setSkeletonCode: (code) => set({ skeletonCode: code }),
-  setSkeletonGenerated: (generated) => set({ skeletonGenerated: generated }),
-  setCopied: (copied) => set({ copied }),
-  setIsValid: (isValid) => set({ isValid }),
+      // Code state
+      uiCode: DEFAULT_JSX_CODE,
+      skeletonCode: "",
+      skeletonGenerated: false,
+      skeletonModified: false,
+      copied: false,
+      isValid: true,
+      setUiCode: (code) => {
+        const { skeletonGenerated, skeletonModified } = get()
+        set({ uiCode: code })
 
-  // Skeleton Configuration
-  skeletonColor: "gray",
-  skeletonBorder: "rounded-md",
-  skeletonBorderColor: "border-gray-200",
-  maxColorDegree: 200,
-  defaultBgClass: "bg-white",
-  setSkeletonColor: (color) => set({ skeletonColor: color }),
-  setSkeletonBorder: (border) => set({ skeletonBorder: border }),
-  setSkeletonBorderColor: (color) => set({ skeletonBorderColor: color }),
-  setMaxColorDegree: (degree) => set({ maxColorDegree: degree }),
-  setDefaultBgClass: (bgClass) => set({ defaultBgClass: bgClass }),
+        // If skeleton has been generated but not modified, auto-generate new skeleton
+        if (skeletonGenerated && !skeletonModified) {
+          get().generateSkeleton()
+        } else if (skeletonGenerated && skeletonModified) {
+          // If skeleton has been modified, show alert
+          set({ unsavedChangesAlert: true })
+        }
+      },
+      setSkeletonCode: (code) => set({ skeletonCode: code, skeletonModified: true }),
+      setSkeletonGenerated: (generated) => set({ skeletonGenerated: generated }),
+      setSkeletonModified: (modified) => set({ skeletonModified: modified }),
+      setCopied: (copied) => set({ copied }),
+      setIsValid: (isValid) => set({ isValid }),
 
-  // UI State
-  activeTab: "ui",
-  fullPreview: false,
-  generatedCount: 0,
-  previewDevice: "desktop",
-  setActiveTab: (tab) => set({ activeTab: tab }),
-  setFullPreview: (preview) => set({ fullPreview: preview }),
-  incrementGeneratedCount: () => set((state) => ({ generatedCount: state.generatedCount + 1 })),
-  setPreviewDevice: (device) => set({ previewDevice: device }),
+      // Skeleton Configuration
+      skeletonColor: "gray",
+      skeletonBorder: "rounded-md",
+      skeletonBorderColor: "border-gray-200",
+      maxColorDegree: 200,
+      defaultBgClass: "bg-white",
+      setSkeletonColor: (color) => set({ skeletonColor: color }),
+      setSkeletonBorder: (border) => set({ skeletonBorder: border }),
+      setSkeletonBorderColor: (color) => set({ skeletonBorderColor: color }),
+      setMaxColorDegree: (degree) => set({ maxColorDegree: degree }),
+      setDefaultBgClass: (bgClass) => set({ defaultBgClass: bgClass }),
 
-  // Actions
-  generateSkeleton: () => {
-    const { skeletonColor, skeletonBorder, skeletonBorderColor, maxColorDegree, defaultBgClass, exportFormat } = get()
+      // UI State
+      activeTab: "ui",
+      activeCodeTab: "ui",
+      fullPreview: false,
+      showEditors: true,
+      generatedCount: 0,
+      previewDevice: "desktop",
+      shareDialogOpen: false,
+      showToast: false,
+      toastMessage: "",
+      unsavedChangesAlert: false,
+      setActiveTab: (tab) => set({ activeTab: tab }),
+      setActiveCodeTab: (tab) => set({ activeCodeTab: tab }),
+      setFullPreview: (preview) => set({ fullPreview: preview }),
+      setShowEditors: (show) => set({ showEditors: show }),
+      incrementGeneratedCount: () => set((state) => ({ generatedCount: state.generatedCount + 1 })),
+      setPreviewDevice: (device) => set({ previewDevice: device }),
+      setShareDialogOpen: (open) => set({ shareDialogOpen: open }),
+      setShowToast: (show, message = "") => set({ showToast: show, toastMessage: message }),
+      setUnsavedChangesAlert: (show) => set({ unsavedChangesAlert: show }),
 
-    set((state) => ({
-      generatedCount: state.generatedCount + 1,
-      skeletonGenerated: true,
-      activeTab: "skeleton",
-    }))
+      // Actions
+      generateSkeleton: () => {
+        const { skeletonColor, skeletonBorder, skeletonBorderColor, maxColorDegree, defaultBgClass, exportFormat } =
+          get()
 
-    // Generate skeleton code based on export format
-    if (exportFormat === "html") {
-      set({
-        skeletonCode: `<div class="p-4 ${skeletonBorder} border ${skeletonBorderColor} shadow-sm ${defaultBgClass}">
+        set((state) => ({
+          generatedCount: state.generatedCount + 1,
+          skeletonGenerated: true,
+          skeletonModified: false,
+          unsavedChangesAlert: false,
+        }))
+
+        // Generate skeleton code based on export format
+        if (exportFormat === "html") {
+          set({
+            skeletonCode: `<div class="p-4 ${skeletonBorder} border ${skeletonBorderColor} shadow-sm ${defaultBgClass}">
   <div class="flex items-center gap-4">
     <div class="h-12 w-12 rounded-full bg-${skeletonColor}-${maxColorDegree} animate-pulse"></div>
     <div class="space-y-2">
@@ -174,10 +217,10 @@ export const useSkeletonStore = create<SkeletonStore>((set, get) => ({
     <div class="h-10 w-28 bg-${skeletonColor}-${maxColorDegree} ${skeletonBorder} animate-pulse"></div>
   </div>
 </div>`,
-      })
-    } else {
-      set({
-        skeletonCode: `<div className="p-4 ${skeletonBorder} border ${skeletonBorderColor} shadow-sm ${defaultBgClass}">
+          })
+        } else {
+          set({
+            skeletonCode: `<div className="p-4 ${skeletonBorder} border ${skeletonBorderColor} shadow-sm ${defaultBgClass}">
   <div className="flex items-center gap-4">
     <div className="h-12 w-12 rounded-full bg-${skeletonColor}-${maxColorDegree} animate-pulse"></div>
     <div className="space-y-2">
@@ -194,7 +237,36 @@ export const useSkeletonStore = create<SkeletonStore>((set, get) => ({
     <div className="h-10 w-28 bg-${skeletonColor}-${maxColorDegree} ${skeletonBorder} animate-pulse"></div>
   </div>
 </div>`,
-      })
-    }
-  },
-}))
+          })
+        }
+      },
+
+      copySkeletonCode: () => {
+        const { skeletonCode } = get()
+        if (typeof navigator !== "undefined") {
+          navigator.clipboard.writeText(skeletonCode)
+          set({
+            copied: true,
+            showToast: true,
+            toastMessage: "Skeleton code copied to clipboard!",
+          })
+          setTimeout(() => set({ copied: false, showToast: false }), 2000)
+        }
+      },
+    }),
+    {
+      name: "skeleton-store",
+      partialize: (state) => ({
+        generatedCount: state.generatedCount,
+        skeletonColor: state.skeletonColor,
+        skeletonBorder: state.skeletonBorder,
+        skeletonBorderColor: state.skeletonBorderColor,
+        maxColorDegree: state.maxColorDegree,
+        defaultBgClass: state.defaultBgClass,
+        uiFormat: state.uiFormat,
+        stylingFormat: state.stylingFormat,
+        exportFormat: state.exportFormat,
+      }),
+    },
+  ),
+)
