@@ -22,17 +22,20 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { toast } from "sonner"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import SkeletonConfiguration from "@/features/studio/components/skeleton-config"
 import Head from "next/head"
 
+//todo: use react query for generated count
 // Dynamically import Monaco Editor to avoid SSR issues
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false })
 
 export default function CodeEditor() {
   // Get state and actions from Zustand store
+
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const {
     // UI Format and Styling Options
     uiFormat,
@@ -46,24 +49,11 @@ export default function CodeEditor() {
     uiCode,
     skeletonCode,
     skeletonGenerated,
-    skeletonModified,
-    copied,
     isValid,
     setUiCode,
     setSkeletonCode,
     setIsValid,
 
-    // Skeleton Configuration
-    skeletonColor,
-    skeletonBorder,
-    skeletonBorderColor,
-    maxColorDegree,
-    defaultBgClass,
-    setSkeletonColor,
-    setSkeletonBorder,
-    setSkeletonBorderColor,
-    setMaxColorDegree,
-    setDefaultBgClass,
 
     // UI State
     activeTab,
@@ -72,7 +62,6 @@ export default function CodeEditor() {
     showEditors,
     generatedCount,
     previewDevice,
-    shareDialogOpen,
     showToast,
     toastMessage,
     unsavedChangesAlert,
@@ -82,7 +71,6 @@ export default function CodeEditor() {
     setFullPreview,
     setShowEditors,
     setPreviewDevice,
-    setShareDialogOpen,
     setShowToast,
     setUnsavedChangesAlert,
     setLayoutMode, // New action
@@ -189,6 +177,9 @@ export default function CodeEditor() {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
+
+              {/* Share Dialog */}
+              <ShareDialog open={shareDialogOpen} onOpenChange={setShareDialogOpen} />
 
               <TooltipProvider>
                 <Tooltip>
@@ -818,8 +809,7 @@ export default function CodeEditor() {
         </div>
       </div>
 
-      {/* Share Dialog */}
-      <ShareDialog />
+
 
       {/* Unsaved Changes Alert */}
       <AlertDialog open={unsavedChangesAlert} onOpenChange={setUnsavedChangesAlert}>
