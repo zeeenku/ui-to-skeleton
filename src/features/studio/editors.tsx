@@ -6,190 +6,234 @@ import { useSkeletonStore } from "@/lib/store"
 import dynamic from "next/dynamic"
 
 import { toast } from "sonner"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false })
-export function Editors(){
-    const {
-    // UI Format and Styling Options
-    uiFormat,
-    stylingFormat,
-    exportFormat,
-    setUiFormat,
-    setStylingFormat,
-    setExportFormat,
-
-    // Code state
-    uiCode,
-    skeletonCode,
-    skeletonGenerated,
-    isValid,
-    setUiCode,
-    setSkeletonCode,
-    setIsValid,
 
 
-    // UI State
-    activeTab,
-    activeCodeTab,
-    fullPreview,
-    showEditors,
-    generatedCount,
-    previewDevice,
-    showToast,
-    toastMessage,
-    unsavedChangesAlert,
-    layoutMode, // New state
-    setActiveTab,
-    setActiveCodeTab,
-    setFullPreview,
-    setShowEditors,
-    setPreviewDevice,
-    setShowToast,
-    setUnsavedChangesAlert,
-    setLayoutMode, // New action
+type CodeFileTabConfig = {
+    format : string;
+    styling: string;
+};
 
-    // Actions
-    generateSkeleton,
-    copySkeletonCode,
-  } = useSkeletonStore()
+const DEFAULT_HTML_CODE = `<div class="bg-white p-4 rounded-lg shadow-md">
+  <div class="flex items-center gap-4">
+    <div class="h-12 w-12 rounded-full bg-cyan-500 flex items-center justify-center text-white font-bold">
+      JD
+    </div>
+    <div>
+      <h3 class="text-lg font-bold text-slate-800">John Doe</h3>
+      <p class="text-slate-500">Frontend Developer</p>
+    </div>
+  </div>
+  <div class="mt-4">
+    <p class="text-sm text-slate-600">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    </p>
+  </div>
+  <div class="mt-4 flex justify-end">
+    <button class="bg-gradient-to-r from-cyan-500 to-cyan-600 text-white px-4 py-2 rounded-md shadow-sm hover:shadow-md transition-shadow">
+      View Profile
+    </button>
+  </div>
+</div>`
+
+export function Editors() {
+  const uiConfigFormats = ["html"];
+  const uiConfigStylings = ["tailwind"];
+  const skeletonConfigFormats = ["html", "jsx"];
+  const skeletonConfigStylings = ["tailwind"];
+
+  const [uiCode, setUiCode] = useState(DEFAULT_HTML_CODE);
+  const [skeletonCode, setSkeletonCode] = useState(DEFAULT_HTML_CODE);
+  const [isSkeletonUpdated, setIsSkeletonUpdated] = useState(false);
+  const [isValid, setIsValid] = useState(true);
+  const [activeCodeTab, setActiveCodeTab] = useState("ui");
+
+  const [uiConfig, setUiConfig] = useState<CodeFileTabConfig>({
+    format: uiConfigFormats[0],
+    styling: uiConfigStylings[0],
+  });
+
+  const [skeletonConfig, setSkeletonConfig] = useState<CodeFileTabConfig>({
+    format: skeletonConfigFormats[0],
+    styling: skeletonConfigStylings[0],
+  });
+
+  // Load from localStorage after mount
+  useEffect(() => {
+    const uiCodeLocal = localStorage.getItem("ui_code");
+    const skeletonCodeLocal = localStorage.getItem("skeleton_code");
+
+    if (uiCodeLocal) setUiCode(uiCodeLocal);
+    if (skeletonCodeLocal) setSkeletonCode(skeletonCodeLocal);
+  }, []);
 
   useEffect(() => {
-    if (showToast) {
-      toast.success(toastMessage || "Success!")
-      setShowToast(false) // Reset the flag after showing
+    if (!isSkeletonUpdated) {
+      setSkeletonCode(uiCode);
+    } else {
+      toast.warning("Skeleton has been modified. Review before overriding.");
     }
-  }, [showToast, toastMessage, setShowToast])
+  }, [uiCode]);
 
-  // Validate HTML
   const validateHtml = (htmlString: string) => {
     try {
       if (typeof window !== "undefined") {
-        const doc = new DOMParser().parseFromString(htmlString, "text/html")
-        const errors = doc.querySelectorAll("parsererror")
-        return errors.length === 0
+        const doc = new DOMParser().parseFromString(htmlString, "text/html");
+        const errors = doc.querySelectorAll("parsererror");
+        return errors.length === 0;
       }
-      return true
+      return true;
     } catch {
-      return false
+      return false;
     }
-  }
+  };
 
   const handleEditorChange = (value: string | undefined, type: string) => {
-    const newCode = value || ""
+    const newCode = value || "";
     if (type === "ui") {
-      setUiCode(newCode)
-      setIsValid(validateHtml(newCode))
+      if (isSkeletonUpdated) {
+        toast.warning("Skeleton already modified. Please confirm overwrite.");
+        return;
+      }
+      setUiCode(newCode);
+      setIsValid(validateHtml(newCode));
     } else {
-      setSkeletonCode(newCode)
+      setIsSkeletonUpdated(true);
+      setSkeletonCode(newCode);
     }
-  }
+  };
 
-  const toggleFullPreview = () => {
-    setFullPreview(!fullPreview)
-    if (!fullPreview) {
-      setShowEditors(false)
-    }
-  }
+  // UI Config handlers
+  const setUiConfigFormat = (value: string) => {
+    setUiConfig((prev) => ({ ...prev, format: value }));
+  };
 
-  const toggleEditors = () => {
-    setShowEditors(!showEditors)
-  }
+  const setUiConfigStyling = (value: string) => {
+    setUiConfig((prev) => ({ ...prev, styling: value }));
+  };
 
-    return (
-         <div className="flex flex-col">
-                  <div className="bg-white/80 backdrop-blur-sm rounded-xl overflow-hidden border border-slate-200/50 shadow-lg transition-all duration-300 hover:shadow-xl h-[calc(100vh-420px)]">
-                    <Tabs value={activeCodeTab} onValueChange={setActiveCodeTab} className="h-full">
-                      <div className="bg-gradient-to-r from-slate-800 to-slate-900 p-3 border-b font-mono text-sm text-white flex items-center justify-between">
-                        <TabsList className="grid w-48 grid-cols-2 bg-slate-700/50">
-                          <TabsTrigger
-                            value="ui"
-                            className="data-[state=active]:bg-slate-600 data-[state=active]:text-white"
-                          >
-                            UI
-                          </TabsTrigger>
-                          <TabsTrigger
-                            value="skeleton"
-                            className="data-[state=active]:bg-slate-600 data-[state=active]:text-white"
-                          >
-                            Skeleton
-                          </TabsTrigger>
-                        </TabsList>
+  // Skeleton Config handlers
+  const setSkeletonConfigFormat = (value: string) => {
+    setSkeletonConfig((prev) => ({ ...prev, format: value }));
+  };
 
-                        <div className="flex items-center space-x-2">
-                          {activeCodeTab === "ui" ? (
-                            <>
-                              <Select value={uiFormat} onValueChange={setUiFormat}>
-                                <SelectTrigger className="h-7 min-w-[100px] bg-slate-700/50 border-slate-600 text-white text-xs">
-                                  <SelectValue placeholder="Format" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="html">HTML</SelectItem>
-                                  <SelectItem value="jsx">JSX</SelectItem>
-                                </SelectContent>
-                              </Select>
+  const setSkeletonConfigStyling = (value: string) => {
+    setSkeletonConfig((prev) => ({ ...prev, styling: value }));
+  };
 
-                              <Select value={stylingFormat} onValueChange={setStylingFormat}>
-                                <SelectTrigger className="h-7 min-w-[100px] bg-slate-700/50 border-slate-600 text-white text-xs">
-                                  <SelectValue placeholder="Styling" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="tailwind">Tailwind</SelectItem>
-                                  <SelectItem value="css" disabled>
-                                    CSS (Soon)
-                                  </SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </>
-                          ) : (
-                            <Select value={exportFormat} onValueChange={setExportFormat}>
-                              <SelectTrigger className="h-7 min-w-[100px] bg-slate-700/50 border-slate-600 text-white text-xs">
-                                <SelectValue placeholder="Format" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="html">HTML</SelectItem>
-                                <SelectItem value="jsx">JSX</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          )}
-                        </div>
-                      </div>
+  return (
+    <div className="flex flex-col">
+      <div className="bg-[#1e1e1e] rounded-xl overflow-hidden border border-[#1e1e1e] shadow-lg transition-all duration-300 hover:shadow-xl h-[calc(100vh-420px)]">
+        <Tabs value={activeCodeTab} onValueChange={setActiveCodeTab} className="h-full bg-[#1e1e1e] border border-[#1e1e1e]">
+          <div className="border-none p-3 border-b bg-[#2d2d30] text-sm text-white flex items-center justify-between">
+            <TabsList className="grid w-48 grid-cols-2 bg-[#3e3e42]">
+              <TabsTrigger value="ui" className="text-white data-[state=active]:bg-[#1e1e1e]">
+                UI
+              </TabsTrigger>
+              <TabsTrigger value="skeleton" className="text-white data-[state=active]:bg-[#1e1e1e]">
+                Skeleton
+              </TabsTrigger>
+            </TabsList>
 
-                      <TabsContent value="ui" className="h-screen m-0">
-                        <MonacoEditor
-                          height="100%"
-                          language={uiFormat === "jsx" ? "javascript" : "html"}
-                          theme="vs-dark"
-                          value={uiCode}
-                          onChange={(value) => handleEditorChange(value, "ui")}
-                          options={{
-                            minimap: { enabled: false },
-                            scrollBeyondLastLine: false,
-                            fontSize: 14,
-                            wordWrap: "on",
-                            automaticLayout: true,
-                          }}
-                        />
-                      </TabsContent>
+            <div className="flex items-center space-x-2">
+              {activeCodeTab === "ui" ? (
+                <>
+                  <Select value={uiConfig.format} onValueChange={setUiConfigFormat}>
+                    <SelectTrigger className="h-7 min-w-[100px] bg-[#3e3e42] border-slate-600 text-white text-xs">
+                      <SelectValue placeholder="Format" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#3e3e42]">
+                      {uiConfigFormats.map((el) => (
+                        <SelectItem className="bg-[#252526] hover:bg-[#252526] data-[state=active]:bg-[#252526] text-white" key={el} value={el}>
+                          {el}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
-                      <TabsContent value="skeleton" className="h-screen m-0">
-                        <MonacoEditor
-                          height="100%"
-                          language={exportFormat === "jsx" ? "javascript" : "html"}
-                          theme="vs-dark"
-                          value={skeletonCode}
-                          onChange={(value) => handleEditorChange(value, "skeleton")}
-                          options={{
-                            minimap: { enabled: false },
-                            scrollBeyondLastLine: false,
-                            fontSize: 14,
-                            wordWrap: "on",
-                            automaticLayout: true,
-                          }}
-                        />
-                      </TabsContent>
-                    </Tabs>
-                  </div>
-                </div>
-    );
+                  <Select value={uiConfig.styling} onValueChange={setUiConfigStyling}>
+                    <SelectTrigger className="h-7 min-w-[100px] bg-[#3e3e42] border-slate-600 text-white text-xs">
+                      <SelectValue placeholder="Styling" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#3e3e42]">
+                      {uiConfigStylings.map((el) => (
+                        <SelectItem className="bg-[#252526] hover:bg-[#252526] data-[state=active]:bg-[#252526] text-white" key={el} value={el}>
+                          {el}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </>
+              ) : (
+                <>
+                  <Select value={skeletonConfig.format} onValueChange={setSkeletonConfigFormat}>
+                    <SelectTrigger className="h-7 min-w-[100px] bg-[#3e3e42] border-slate-600 text-white text-xs">
+                      <SelectValue placeholder="Format" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {skeletonConfigFormats.map((el) => (
+                        <SelectItem className="bg-[#252526] hover:bg-[#252526] data-[state=active]:bg-[#252526] text-white" key={el} value={el}>
+                          {el}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={skeletonConfig.styling} onValueChange={setSkeletonConfigStyling}>
+                    <SelectTrigger className="h-7 min-w-[100px] bg-[#3e3e42] border-slate-600 text-white text-xs">
+                      <SelectValue placeholder="Styling" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {skeletonConfigStylings.map((el) => (
+                        <SelectItem className="bg-[#252526] hover:bg-[#252526] data-[state=active]:bg-[#252526] text-white" key={el} value={el}>
+                          {el}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </>
+              )}
+            </div>
+          </div>
+
+          <TabsContent value="ui" className="h-screen m-0 py-2">
+            <MonacoEditor
+              height="100%"
+              language="html"
+              theme="vs-dark"
+              value={uiCode}
+              onChange={(value) => handleEditorChange(value, "ui")}
+              options={{
+                minimap: { enabled: false },
+                scrollBeyondLastLine: false,
+                fontSize: 14,
+                wordWrap: "on",
+                automaticLayout: true,
+              }}
+            />
+          </TabsContent>
+
+          <TabsContent value="skeleton" className="h-screen m-0 py-2">
+            <MonacoEditor
+              height="100%"
+              language="html"
+              theme="vs-dark"
+              value={skeletonCode}
+              onChange={(value) => handleEditorChange(value, "skeleton")}
+              options={{
+                minimap: { enabled: false },
+                scrollBeyondLastLine: false,
+                fontSize: 14,
+                wordWrap: "on",
+                automaticLayout: true,
+              }}
+            />
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
 }

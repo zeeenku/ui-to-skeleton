@@ -36,30 +36,21 @@ const getOpenIssueLInk = () => {
 }
 export default function CodeEditor() {
   // Get state and actions from Zustand store
-
+  const [uiCode, setUiCode] = useState(localStorage.getItem("ui_code")?? "");
+    const [skeletonCode, setSkeletonCode] = useState(localStorage.getItem("skeleton_code")?? "");
+    const [isSkeletonUpdated, setIsSKeletonUpdated] = useState(false);
+    const [isValid, setIsValid] = useState(true);
+    const [uiFormat, setUiFormat] = useState("html");
+    const [exportFormat, setExportFormat] = useState("jsx");
+    const [activeCodeTab, setActiveCodeTab] = useState("ui");
+    const [stylingFormat, setStylingFormat] = useState("tailwind");
+    let skeletonGenerated = "hh";
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const {
-    // UI Format and Styling Options
-    uiFormat,
-    stylingFormat,
-    exportFormat,
-    setUiFormat,
-    setStylingFormat,
-    setExportFormat,
-
-    // Code state
-    uiCode,
-    skeletonCode,
-    skeletonGenerated,
-    isValid,
-    setUiCode,
-    setSkeletonCode,
-    setIsValid,
 
 
     // UI State
     activeTab,
-    activeCodeTab,
     fullPreview,
     showEditors,
     generatedCount,
@@ -69,7 +60,6 @@ export default function CodeEditor() {
     unsavedChangesAlert,
     layoutMode, // New state
     setActiveTab,
-    setActiveCodeTab,
     setFullPreview,
     setShowEditors,
     setPreviewDevice,
@@ -103,26 +93,6 @@ export default function CodeEditor() {
     }
   }
 
-  const handleEditorChange = (value: string | undefined, type: string) => {
-    const newCode = value || ""
-    if (type === "ui") {
-      setUiCode(newCode)
-      setIsValid(validateHtml(newCode))
-    } else {
-      setSkeletonCode(newCode)
-    }
-  }
-
-  const toggleFullPreview = () => {
-    setFullPreview(!fullPreview)
-    if (!fullPreview) {
-      setShowEditors(false)
-    }
-  }
-
-  const toggleEditors = () => {
-    setShowEditors(!showEditors)
-  }
 
   return (
     <div className="flex flex-col h-full bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
