@@ -1,6 +1,9 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
+// Add these to your existing store types
+type LayoutMode = "split" | "editor" | "preview"
+
 type SkeletonStore = {
   // UI Format and Styling Options
   uiFormat: string
@@ -56,6 +59,10 @@ type SkeletonStore = {
   setShareDialogOpen: (open: boolean) => void
   setShowToast: (show: boolean, message?: string) => void
   setUnsavedChangesAlert: (show: boolean) => void
+
+  // Add these to your SkeletonStore interface
+  layoutMode: LayoutMode
+  setLayoutMode: (mode: LayoutMode) => void
 
   // Actions
   generateSkeleton: () => void
@@ -184,6 +191,10 @@ export const useSkeletonStore = create<SkeletonStore>()(
       setShareDialogOpen: (open) => set({ shareDialogOpen: open }),
       setShowToast: (show, message = "") => set({ showToast: show, toastMessage: message }),
       setUnsavedChangesAlert: (show) => set({ unsavedChangesAlert: show }),
+
+      // Add these to your store implementation
+      layoutMode: "split",
+      setLayoutMode: (mode) => set({ layoutMode: mode }),
 
       // Actions
       generateSkeleton: () => {
