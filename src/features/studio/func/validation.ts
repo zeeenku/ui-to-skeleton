@@ -1,4 +1,14 @@
 import { HTMLHint } from "htmlhint";
+import { UiCodeConfigFormats, SkeletonCodeConfigFormats, UiCodeConfigStylings, SkeletonCodeConfigStylings } from "../types";
+import { jsxToHtml } from "./convertion";
+
+
+export const validationController = async (code: string, format: UiCodeConfigFormats | SkeletonCodeConfigFormats) => {
+    const results = await validateHtmlFormat(code);
+    return results;
+}
+
+
 
 
 const noScriptTagRule = {
@@ -21,7 +31,7 @@ const noScriptTagRule = {
 
 HTMLHint.addRule(noScriptTagRule);
 
-export const validateFormat = async (html: string, type: string) => {
+export const validateHtmlFormat = async (html: string) => {
   const rules = {
     "tagname-lowercase": true,
     "attr-value-double-quotes": true,

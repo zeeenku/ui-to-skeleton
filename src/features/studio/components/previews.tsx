@@ -1,7 +1,6 @@
 "use client"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-
 import { AllDevicesType, devices } from "../constants"
 import DeviceSwitcherBtn from "./device-switcher-btn"
 import { PreviewScreen } from "./preview-screen"

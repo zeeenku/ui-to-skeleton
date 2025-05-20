@@ -1,148 +1,175 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { CodeFileTabConfig, SkeletonConfig } from "../types";
-import { DEFAULT_HTML_CODE, DEFAULT_SKELETON_CONFIG, DEFAULT_SKELETON_STYLE, DEFAULT_UI_CONFIG } from "../constants";
+import { CodeFileTabConfig } from "../types";
+import {
+  DEFAULT_HTML_CODE,
+  DEFAULT_SKELETON_CONFIG,
+  DEFAULT_UI_CONFIG,
+} from "../constants";
+import { convertionController } from "../func/convertion";
+import { validationController } from "../func/validation";
+import { editor } from "monaco-editor";
 
-
-//todo: need skeleton code and also preview code....
-//todo: it necessits a transition between them.....
+const generateSkeleton = (htmlCode: string) => {
+  // Add your skeleton generation logic here
+  return `<div class="skeleton">${htmlCode}</div>`; // Placeholder logic
+};
 
 type SkeletonStore = {
-  skeletonConfig: SkeletonConfig;
   uiCodeConfig: CodeFileTabConfig;
+  setUiCodeConfig: (config: Partial<CodeFileTabConfig>) => void;
+
   skeletonCodeConfig: CodeFileTabConfig;
+  setSkeletonCodeConfig: (config: Partial<CodeFileTabConfig>) => void;
 
   uiCode: string;
+  setUiCodeFromEditor: (code: string) => Promise<void>;
+
   skeletonCode: string;
+  setSkeletonCodeFromEditor: (code: string) => Promise<void>;
 
-  skeletonGenerated: boolean;
-  skeletonModified: boolean;
-  copied: boolean;
-  isValid: boolean;
+  uiEditorRef: editor.IStandaloneCodeEditor | null;
+  skeletonEditorRef: editor.IStandaloneCodeEditor | null;
+  setUIEditorRef: (editor: editor.IStandaloneCodeEditor) => void;
+  setSkeletonEditorRef: (editor: editor.IStandaloneCodeEditor) => void;
+  mountEditorRef: (
+    editor: editor.IStandaloneCodeEditor,
+    type: "ui" | "skeleton"
+  ) => void;
 
-  setUiCode: (code: string) => void;
-  setSkeletonCode: (code: string) => void;
+  skeletonCodeUpdatedManually: boolean;
+  hangingUICodeUpdates: string;
+  uiSkeletonContraduction: boolean;
 
-  setUiCodeConfig: (config: Partial<CodeFileTabConfig>) => void;
-  setSkeletonCodeConfig: (config: Partial<CodeFileTabConfig>) => void;
-  setSkeletonConfig: (config: Partial<SkeletonConfig>) => void;
-
-  generateSkeleton: () => void;
-  copySkeletonCode: () => void;
-
-  setSkeletonGenerated: (v: boolean) => void;
-  setSkeletonModified: (v: boolean) => void;
-  setCopied: (v: boolean) => void;
-  setIsValid: (v: boolean) => void;
+  solveContraduction: (decision: "continue" | "cancel") => Promise<void>;
 };
 
 export const useSkeletonStore = create<SkeletonStore>()(
   persist(
     (set, get) => ({
-      skeletonConfig: DEFAULT_SKELETON_STYLE,
       uiCodeConfig: DEFAULT_UI_CONFIG,
       skeletonCodeConfig: DEFAULT_SKELETON_CONFIG,
 
       uiCode: DEFAULT_HTML_CODE,
-      skeletonCode: "",
+      skeletonCode: generateSkeleton(DEFAULT_HTML_CODE),
 
-      skeletonGenerated: false,
-      skeletonModified: false,
-      copied: false,
-      isValid: true,
+      uiEditorRef: null,
+      skeletonEditorRef: null,
 
-      setUiCode: (code) => {
-        const { skeletonGenerated, skeletonModified } = get();
-        set({ uiCode: code });
+      skeletonCodeUpdatedManually: false,
+      hangingUICodeUpdates: "",
+      uiSkeletonContraduction: false,
 
-        if (skeletonGenerated && !skeletonModified) {
-          get().generateSkeleton();
+      setUIEditorRef: (editor) => set({ uiEditorRef: editor }),
+      setSkeletonEditorRef: (editor) => set({ skeletonEditorRef: editor }),
+      mountEditorRef: (editor, type) => {
+        if (type === "ui") {
+          set({ uiEditorRef: editor });
+        } else {
+          set({ skeletonEditorRef: editor });
         }
       },
 
-      setSkeletonCode: (code) => {
-        set({ skeletonCode: code, skeletonModified: true });
-      },
-
-      setUiCodeConfig: (config) =>
-        set((state) => ({
-          uiCodeConfig: {
-            ...state.uiCodeConfig,
-            ...config,
-          },
-        })),
-
-      setSkeletonCodeConfig: (config) =>
-        set((state) => ({
-          skeletonCodeConfig: {
-            ...state.skeletonCodeConfig,
-            ...config,
-          },
-        })),
-
-      setSkeletonConfig: (config) =>
-        set((state) => ({
-          skeletonConfig: {
-            ...state.skeletonConfig,
-            ...config,
-          },
-        })),
-
-      generateSkeleton: () => {
-        const { skeletonConfig, uiCodeConfig } = get();
-        const { color, intensity, defaultBorderRadius: border } = skeletonConfig;
-        const base = uiCodeConfig.format === "html" ? "class" : "className";
-
-        const skeleton = `
-<div ${base}="p-4 ${border} border border-gray-200 shadow-sm bg-white">
-  <div ${base}="flex items-center gap-4">
-    <div ${base}="h-12 w-12 rounded-full bg-${color}-${intensity} animate-pulse"></div>
-    <div ${base}="space-y-2">
-      <div ${base}="h-5 w-32 bg-${color}-${intensity} ${border} animate-pulse"></div>
-      <div ${base}="h-4 w-40 bg-${color}-${intensity} ${border} animate-pulse"></div>
-    </div>
-  </div>
-  <div ${base}="mt-4 space-y-2">
-    <div ${base}="h-3 w-full bg-${color}-${intensity} ${border} animate-pulse"></div>
-    <div ${base}="h-3 w-full bg-${color}-${intensity} ${border} animate-pulse"></div>
-    <div ${base}="h-3 w-3/4 bg-${color}-${intensity} ${border} animate-pulse"></div>
-  </div>
-  <div ${base}="mt-4 flex justify-end">
-    <div ${base}="h-10 w-28 bg-${color}-${intensity} ${border} animate-pulse"></div>
-  </div>
-</div>`.trim();
-
-        set({
-          skeletonCode: skeleton,
-          skeletonGenerated: true,
-          skeletonModified: false,
+      setUiCodeConfig: (config) => {
+        set((state) => {
+          const updatedConfig = { ...state.uiCodeConfig, ...config };
+          return {
+            uiCodeConfig: updatedConfig,
+            uiCode: convertionController(
+              state.uiCode,
+              state.uiCodeConfig.format,
+              config.format ?? state.uiCodeConfig.format,
+              state.uiCodeConfig.styling,
+              config.styling ?? state.uiCodeConfig.styling
+            ),
+          };
         });
       },
 
-      copySkeletonCode: () => {
-        const { skeletonCode } = get();
-        if (typeof navigator !== "undefined") {
-          navigator.clipboard.writeText(skeletonCode);
-          set({ copied: true });
-          setTimeout(() => set({ copied: false }), 2000);
-        }
+      setSkeletonCodeConfig: (config) => {
+        set((state) => {
+          const updatedConfig = { ...state.skeletonCodeConfig, ...config };
+          return {
+            skeletonCodeConfig: updatedConfig,
+            skeletonCode: convertionController(
+              state.skeletonCode,
+              state.skeletonCodeConfig.format,
+              config.format ?? state.skeletonCodeConfig.format,
+              state.skeletonCodeConfig.styling,
+              config.styling ?? state.skeletonCodeConfig.styling
+            ),
+          };
+        });
       },
 
-      setSkeletonGenerated: (v) => set({ skeletonGenerated: v }),
-      setSkeletonModified: (v) => set({ skeletonModified: v }),
-      setCopied: (v) => set({ copied: v }),
-      setIsValid: (v) => set({ isValid: v }),
+      setUiCodeFromEditor: async (code) => {
+        const { uiCodeConfig, skeletonCodeUpdatedManually } = get();
+        const errors = await validationController(code, uiCodeConfig.format);
+
+        set((state) => ({
+          uiCodeConfig: {
+            ...state.uiCodeConfig,
+            errors,
+          },
+        }));
+
+        if (errors.length > 0) return;
+
+        if (skeletonCodeUpdatedManually) {
+          set({
+            uiSkeletonContraduction: true,
+            hangingUICodeUpdates: code,
+          });
+          return;
+        }
+
+        set({
+          uiCode: code,
+          skeletonCode: generateSkeleton(code),
+        });
+      },
+
+      setSkeletonCodeFromEditor: async (code) => {
+        const { skeletonCodeConfig } = get();
+        const errors = await validationController(code, skeletonCodeConfig.format);
+
+        set((state) => ({
+          skeletonCodeConfig: {
+            ...state.skeletonCodeConfig,
+            errors,
+          },
+        }));
+
+        if (errors.length > 0) return;
+
+        set({
+          skeletonCode: code,
+          skeletonCodeUpdatedManually: true,
+        });
+      },
+
+      solveContraduction: async (decision) => {
+        const { hangingUICodeUpdates, uiCode, uiEditorRef } = get();
+
+        const newUICode =
+          decision === "continue" ? hangingUICodeUpdates : uiCode;
+
+        set({
+          uiCode: newUICode,
+          uiSkeletonContraduction: false,
+          hangingUICodeUpdates: "",
+        });
+
+        if (uiEditorRef) {
+          uiEditorRef.setValue(newUICode);
+        }
+      },
     }),
     {
       name: "skeleton-store",
       partialize: (state) => ({
         uiCodeConfig: state.uiCodeConfig,
         skeletonCodeConfig: state.skeletonCodeConfig,
-        skeletonConfig: state.skeletonConfig,
-        uiCode: state.uiCode,
-        skeletonCode: state.skeletonCode,
-        skeletonGenerated: state.skeletonGenerated,
-        skeletonModified: state.skeletonModified,
       }),
     }
   )

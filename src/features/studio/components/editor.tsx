@@ -1,30 +1,41 @@
 "use client";
 import dynamic from "next/dynamic"
 import * as monaco from 'monaco-editor';
-import { EditorError } from "../types";
 import { Copy } from "lucide-react";
+import { useSkeletonStore } from "../stores";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false })
 
-
 interface EditorProps {
-  value: string;
-  onChange: (value: string | undefined) => void;
-  errors: EditorError[];
-  onCopy: () => void;
-  copied: boolean;
-  onMount?: (editor: monaco.editor.IStandaloneCodeEditor) => void;
+ type: "ui" | "skeleton";
 }
 
 export const Editor: React.FC<EditorProps> = ({
-  value,
-  onChange,
-  errors,
-  onCopy,
-  copied,
-  onMount,
+    type,
 }) => {
-  return (
+
+    const {
+        uiCodeConfig,
+        mountEditorRef,
+        uiCode,
+        skeletonCode,
+        setSkeletonCodeFromEditor,
+        setUiCodeFromEditor,
+        skeletonCodeConfig,
+      } = useSkeletonStore();
+
+  const onMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
+    mountEditorRef(editor, type);
+  };
+
+const errors = type == "ui" ? uiCodeConfig.errors : skeletonCodeConfig.errors ;
+const value = type == "ui" ? uiCode : skeletonCode ;
+const onCopy = ()=>{};
+const codeCopied = false;
+const onChange =  (str: string | undefined) => 
+    { type == "ui" ? setUiCodeFromEditor(str ?? "") : setSkeletonCodeFromEditor(str ?? "") };
+
+return (
     <div>
       <div className="flex items-center px-2 pb-3 justify-between">
         <div className="text-red-500 text-xs font-semibold">
@@ -36,7 +47,7 @@ export const Editor: React.FC<EditorProps> = ({
           className="ml-4 flex justify-center items-center space-x-1 bg-[#3e3e42] rounded-md py-1 px-2 text-white text-xs"
         >
           <Copy className="w-3 h-3" />
-          <span>{copied ? 'copied!' : 'copy'}</span>
+          <span>{codeCopied ? 'copied!' : 'copy'}</span>
         </button>
       </div>
 
