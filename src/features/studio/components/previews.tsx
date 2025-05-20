@@ -1,13 +1,12 @@
 "use client"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
 
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { cn } from "@/lib/utils"
+import { useState } from "react"
 
-import { useMemo, useState } from "react"
-
-import { devices, DeviceType } from "../constants"
+import { AllDevicesType, devices } from "../constants"
+import DeviceSwitcherBtn from "./device-switcher-btn"
+import { PreviewScreen } from "./preview-screen"
+import { useLocalStorage } from "@/hooks/use-local-storage"
 
 const DEFAULT_HTML_CODE = `<div class="bg-white p-4 rounded-lg shadow-md">
   <div class="flex items-center gap-4">
@@ -32,100 +31,17 @@ const DEFAULT_HTML_CODE = `<div class="bg-white p-4 rounded-lg shadow-md">
   </div>
 </div>`
 
-//todo: use react query for generated count
-// Dynamically import Monaco Editor to avoid SSR issues
-const getOpenIssueLInk = () => {
-  return "https://github.com/zeeenku/ui-to-skeleton/issues/new";
-}
 
 
-const stylingFormat: 'tailwind' = 'tailwind';
-
-const headAdditions: Record<typeof stylingFormat, string> = {
-  tailwind: `<script src="https://cdn.tailwindcss.com"></script>`,
-};
-
-
-interface PreviewScreenProps {
-  title: string;
-  previewDevice: DeviceType;
-  code: string;
-}
-
-const PreviewScreen: React.FC<PreviewScreenProps> = ({
-  title,
-  previewDevice,
-  code,
-}) => {
-  const currentDevice = devices.find(d => d.value === previewDevice)!;
-
-  function getHeight(): number {
-    const dvh = window.innerHeight;
-    const remInPx = parseFloat(getComputedStyle(document.documentElement).fontSize);
-    const remValue = 9 * remInPx;
-    return dvh - remValue;
-  }
-
-  const srcDoc = useMemo(() => {
-    return `
-      <html>
-        <head>
-          <meta name="viewport" content="width=${currentDevice.size}, initial-scale=1.0">
-          ${headAdditions[stylingFormat]}
-          <style>
-            body {
-              margin: 0;
-              padding: 0;
-              height: ${getHeight()}px;
-              max-height: ${getHeight()}px;
-              overflow-y: auto;
-              width: 100%;
-              border-radius: 16px;
-              background-color: gray;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-            }
-          </style>
-        </head>
-        <body>
-          ${code}
-        </body>
-      </html>
-    `;
-  }, [code, previewDevice]);
-
-  return (
-    <div className="flex items-center justify-center h-full">
-      <div
-        className={cn(
-          'transform transition-all h-full duration-300 px-2',
-          `max-w-[${currentDevice.size}px] w-full`
-        )}
-      >
-        <iframe
-          title={title}
-          srcDoc={srcDoc}
-          className="w-full h-full border-0"
-        />
-      </div>
-    </div>
-  );
-};
 
 
 export function Previews(){
-  const [activeTab, setActiveTab] = useState('ui');
-  const [previewDevice, setPreviewDevice] = useState<DeviceType>('desktop');
+  const [activeTab, setActiveTab] =  useLocalStorage<string>("preview_ui_tab", "ui");
+  const [previewDevice, setPreviewDevice] = useLocalStorage<AllDevicesType>("preview_device", devices[0].value);
+
   const [skeletonCode, setSkeletonCode] = useState<string>('');
   const [uiCode, setUiCode] = useState<string>(DEFAULT_HTML_CODE);
 
-
-
-    const [isValid, setIsValid] = useState(true);
-    function generateSkeleton() {
-        throw new Error("Function not implemented.")
-    }
 
     return(
         <div className="flex flex-col">
@@ -152,9 +68,10 @@ export function Previews(){
 
                         <div className="flex items-center space-x-1 bg-slate-200/70 p-1 rounded-md">
                         {devices.map(el=>(
-                            <DeviceSwitcher
-                            previewDevice={el}
-                            setPreviewDevice={()=>setPreviewDevice(el.value)}
+                            <DeviceSwitcherBtn
+                                previewDevice={el}
+                                setPreviewDevice={() => setPreviewDevice(el.value)} 
+                                activePreviewDeviceValue={previewDevice}                            
                             />
                         ))}
                           
@@ -175,41 +92,3 @@ export function Previews(){
 }
 
 
-interface DeviceSwitcherProps {
-  previewDevice: DeviceType;
-  setPreviewDevice: CallableFunction;
-}
-
-
-const DeviceSwitcher: React.FC<DeviceSwitcherProps> = ({
-  previewDevice,
-  setPreviewDevice,
-}) => {
-  return (
-    <div className="flex items-center space-x-1 bg-slate-200/70 p-1 rounded-md">
-      {devices.map(({ name, value, Icon }) => (
-        <TooltipProvider key={value}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className={cn(
-                  "h-8 w-8 p-0",
-                  previewDevice === value && "bg-white text-cyan-700 shadow-sm"
-                )}
-                onClick={() => setPreviewDevice}
-              >
-                <Icon className="h-4 w-4" />
-                <span className="sr-only">{name}</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{name} view</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      ))}
-    </div>
-  );
-};

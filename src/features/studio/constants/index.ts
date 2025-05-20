@@ -1,17 +1,19 @@
 import { Monitor, Smartphone, Tablet } from "lucide-react";
 
-export const devices = [
+export type DeviceType = {
+  name: string;
+  value: string;
+  Icon: React.ElementType;
+  size: number;
+};
+
+
+export const devices : DeviceType[] = [
   {
     name: "Desktop",
     value: "desktop",
     Icon: Monitor,
     size: 1280,
-  },
-  {
-    name: "Laptop",
-    value: "laptop",
-    Icon: Monitor,
-    size: 1024,
   },
   {
     name: "Tablet",
@@ -27,11 +29,12 @@ export const devices = [
   },
 ] as const;
 
-export type DeviceType = {
-  name: string;
-  value: string;
-  Icon: React.ElementType;
-  size: number;
-};
 
 export type AllDevicesType = (typeof devices)[number]["value"];
+
+export const stylingFormat: 'tailwind' = 'tailwind';
+
+export const headAdditions: Record<typeof stylingFormat, string> = {
+  tailwind: `<script src="https://cdn.tailwindcss.com"></script>`,
+};
+

@@ -11,7 +11,7 @@ import htmlValidator from 'html-validator';
 import { toast } from "sonner"
 import { useEffect, useRef, useState } from "react"
 import { useLocalStorage } from "@/hooks/use-local-storage"
-import { UpdateUITabAlert } from "./components/code-tab-update-alert"
+import { UpdateUITabAlert } from "./code-tab-update-alert"
 import { Copy } from "lucide-react";
 import { Hint } from "htmlhint/types";
 

@@ -27,7 +27,7 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import SkeletonConfiguration from "@/features/studio/components/skeleton-config"
 import Head from "next/head"
-import { Editors } from "@/features/studio/editors"
+import { Editors } from "@/features/studio/components/editors"
 import { Previews } from "@/features/studio/components/previews"
 
 //todo: use react query for generated count
