@@ -7,31 +7,7 @@ import { AllDevicesType, devices } from "../constants"
 import DeviceSwitcherBtn from "./device-switcher-btn"
 import { PreviewScreen } from "./preview-screen"
 import { useLocalStorage } from "@/hooks/use-local-storage"
-
-const DEFAULT_HTML_CODE = `<div class="bg-white p-4 rounded-lg shadow-md">
-  <div class="flex items-center gap-4">
-    <div class="h-12 w-12 rounded-full bg-cyan-500 flex items-center justify-center text-white font-bold">
-      JD
-    </div>
-    <div>
-      <h3 class="text-lg font-bold text-slate-800">John Doe</h3>
-      <p class="text-slate-500">Frontend Developer</p>
-    </div>
-  </div>
-  <div class="mt-4">
-    <p class="text-sm text-slate-600">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-      Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    </p>
-  </div>
-  <div class="mt-4 flex justify-end">
-    <button class="bg-gradient-to-r from-cyan-500 to-cyan-600 text-white px-4 py-2 rounded-md shadow-sm hover:shadow-md transition-shadow">
-      View Profile
-    </button>
-  </div>
-</div>`
-
-
+import { useSkeletonStore } from "../stores"
 
 
 
@@ -39,9 +15,10 @@ export function Previews(){
   const [activeTab, setActiveTab] =  useLocalStorage<string>("preview_ui_tab", "ui");
   const [previewDevice, setPreviewDevice] = useLocalStorage<AllDevicesType>("preview_device", devices[0].value);
 
-  const [skeletonCode, setSkeletonCode] = useState<string>('');
-  const [uiCode, setUiCode] = useState<string>(DEFAULT_HTML_CODE);
-
+  const {
+    uiCode,
+    skeletonCode,
+  } = useSkeletonStore();
 
     return(
         <div className="flex flex-col">
@@ -84,7 +61,7 @@ export function Previews(){
                             <PreviewScreen title="UI Preview" previewDevice={previewDevice} code={uiCode}/>
                         </TabsContent>
                         <TabsContent value="skeleton" className="mt-0 h-full">
-                            <PreviewScreen title="SKeleton Preview" previewDevice={previewDevice} code={uiCode}/>                        </TabsContent>
+                            <PreviewScreen title="SKeleton Preview" previewDevice={previewDevice} code={skeletonCode}/>                        </TabsContent>
                       </div>
                     </Tabs>
                   </div>

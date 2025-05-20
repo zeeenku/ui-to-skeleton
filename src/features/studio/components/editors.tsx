@@ -1,169 +1,80 @@
 "use client";
-import { HTMLHint } from "htmlhint";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useSkeletonStore } from "@/features/studio/stores"
 import dynamic from "next/dynamic"
 import * as monaco from 'monaco-editor';
-import htmlValidator from 'html-validator';
 
-import { toast } from "sonner"
-import { useEffect, useRef, useState } from "react"
-import { useLocalStorage } from "@/hooks/use-local-storage"
+import { useRef, useState } from "react"
 import { UpdateUITabAlert } from "./code-tab-update-alert"
 import { Copy } from "lucide-react";
-import { Hint } from "htmlhint/types";
+
+import { useSkeletonStore } from "../stores";
+import { skeletonCodeConfigFormats, skeletonCodeConfigStylings, uiCodeConfigFormats, uiCodeConfigStylings } from "../constants";
+import { validateFormat } from "../func/validation";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false })
 
 
-type CodeFileTabConfig = {
-    format : string;
-    styling: string; 
-    errors: Hint[];
-};
-
-const DEFAULT_HTML_CODE = `<div class="bg-white p-4 rounded-lg shadow-md">
-  <div class="flex items-center gap-4">
-    <div class="h-12 w-12 rounded-full bg-cyan-500 flex items-center justify-center text-white font-bold">
-      JD
-    </div>
-    <div>
-      <h3 class="text-lg font-bold text-slate-800">John Doe</h3>
-      <p class="text-slate-500">Frontend Developer</p>
-    </div>
-  </div>
-  <div class="mt-4">
-    <p class="text-sm text-slate-600">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-      Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    </p>
-  </div>
-  <div class="mt-4 flex justify-end">
-    <button class="bg-gradient-to-r from-cyan-500 to-cyan-600 text-white px-4 py-2 rounded-md shadow-sm hover:shadow-md transition-shadow">
-      View Profile
-    </button>
-  </div>
-</div>`
-
-
-const uiConfigFormats = ["html"];
-const uiConfigStylings = ["tailwind"];
-const skeletonConfigFormats = ["html", "jsx"];
-const skeletonConfigStylings = ["tailwind"];
-
-
-// Use correct typing structure for custom rules
-const noScriptTagRule = {
-  id: 'no-script-tag',
-  description: 'Disallow use of <script> tags',
-  // Match HTMLHint's expected signature exactly
-  init(parser: any, reporter: any, options?: unknown) {
-    const rule = this;
-    parser.addListener('tagstart', (event: any) => {
-      if (event.tagName.toLowerCase() === 'script') {
-        reporter.error(
-          'The <script> tag is not allowed.',
-          event.line,
-          event.col,
-          rule,
-          event.raw
-        );
-      }
-    });
-  }
-};
-
-// Register the rule globally
-HTMLHint.addRule(noScriptTagRule);
-
-// Validation function
-const validateFormat = async (html: string, type: string) => {
-  const rules = {
-    "tagname-lowercase": true,
-    "attr-value-double-quotes": true,
-    "doctype-first": false,
-    "tag-pair": true,
-    "spec-char-escape": false,
-    "id-unique": true,
-    "src-not-empty": true,
-    "attr-no-duplication": true,
-    "no-script-tag": true // ✅ Our custom rule
-  };
-
-  const results = await HTMLHint.verify(html, rules);
-  return results;
-};
-
-
-  const generateSkeleton = (str: string) => {
-    return str;
-  }
 export function Editors() {
-  const [uiCode, setUiCode] = useLocalStorage<string>("ui_code", DEFAULT_HTML_CODE);
-   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+  const {
+    uiCode,
+    setUiCode,
+    skeletonCode,
+    setSkeletonCode,
+    uiCodeConfig,
+    skeletonCodeConfig,
+    setUiCodeConfig,
+    setSkeletonCodeConfig,
+    generateSkeleton,
+  } = useSkeletonStore();
 
-  const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
-    editorRef.current = editor;
-  };
-
-  const [skeletonCode, setSkeletonCode] = useLocalStorage<string>("skeleton_code", generateSkeleton(uiCode));
+  // Internal UI state
+  const uiCodeTabEditorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const [isSkeletonUpdated, setIsSkeletonUpdated] = useState(false);
   const [isAlertShown, setIsAlertShown] = useState(false);
   const [activeCodeTab, setActiveCodeTab] = useState("ui");
-  
+  const [leftUICode, setLeftUICode] = useState("");
+  const [codeCopied, setCodeCopied] = useState<"ui" | "skeleton" | null>(null);
 
-    const defaultUiConfig = {
-        format: uiConfigFormats[0],
-        styling: uiConfigStylings[0],
-        errors: [],
-    };
+  const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
+    uiCodeTabEditorRef.current = editor;
+  };
 
+  const setuiCodeConfigFormat = (value: string) => {
+    setUiCodeConfig({ format: value });
+  };
 
-    const defaultSkeletonConfig = {
-    format: skeletonConfigFormats[0],
-    styling: skeletonConfigStylings[0],
-    errors: [],
-    };
+  const setuiCodeConfigStyling = (value: string) => {
+    setUiCodeConfig({ styling: value });
+  };
 
-    //todo: will be related more to zustand
-  const [uiConfig, setUiConfig] = useLocalStorage<CodeFileTabConfig>("uiConfig", defaultUiConfig);
+  const setSkeletonCodeConfigFormat = (value: string) => {
+    setSkeletonCodeConfig({ format: value });
+  };
 
-  const [skeletonConfig, setSkeletonConfig] = useLocalStorage<CodeFileTabConfig>("skeletonConfig", defaultSkeletonConfig);
+  const setSkeletonCodeConfigStyling = (value: string) => {
+    setSkeletonCodeConfig({ styling: value });
+  };
 
+  const handleEditorChange = async (
+    value: string | undefined,
+    type: "ui" | "skeleton",
+    forceUpdate = false
+  ) => {
+    const newCode = value || "";
 
-
-  // Config setters
-  const setUiConfigFormat = (value: string) =>
-    setUiConfig((prev) => ({ ...prev, format: value }));
-
-  const setUiConfigStyling = (value: string) =>
-    setUiConfig((prev) => ({ ...prev, styling: value }));
-
-  const setSkeletonConfigFormat = (value: string) =>
-    setSkeletonConfig((prev) => ({ ...prev, format: value }));
-
-  const setSkeletonConfigStyling = (value: string) =>
-    setSkeletonConfig((prev) => ({ ...prev, styling: value }));
-
-
-
-  const [leftUICode,setLeftUICode] = useState("");
-  const handleEditorChange = async (value: string | undefined, type: string, forceUpdate= false) => {
-        const newCode = value || "";
-    if(leftUICode && !forceUpdate){
-        setLeftUICode("")
-        setUiCode(newCode);
-        return;
+    if (leftUICode && !forceUpdate) {
+      setLeftUICode("");
+      setUiCode(newCode);
+      return;
     }
+
+    const errors = await validateFormat(newCode, type);
+
     if (type === "ui") {
-      const errors = await validateFormat(newCode, type);
-      if (errors.length > 0) {
-        setUiConfig((prev) => ({ ...prev, errors: errors }));
-        return;
-      }
-      setUiConfig((prev) => ({ ...prev, errors: [] }));
+          setUiCodeConfig({ errors });
+      if (errors.length > 0) return;
 
       if (isSkeletonUpdated && !forceUpdate) {
         setIsAlertShown(true);
@@ -174,47 +85,39 @@ export function Editors() {
       setIsSkeletonUpdated(false);
       setIsAlertShown(false);
       setUiCode(newCode);
-      setSkeletonCode(generateSkeleton(newCode)); // todo: add generation logic 
-      setSkeletonConfig((prev) => ({ ...prev, errors: [] }));
+      generateSkeleton(); // uses current uiCode
+      setSkeletonCodeConfig({ errors: [] });
     } else {
-      const errors = await validateFormat(newCode, type);
-      if (errors.length > 0) {
-        setSkeletonConfig((prev) => ({ ...prev, errors: errors }));
-        return;
-      }
+      setSkeletonCodeConfig({ errors });
+      if (errors.length > 0) return;
 
-      setSkeletonConfig((prev) => ({ ...prev, errors: errors }));
       setIsSkeletonUpdated(true);
       setSkeletonCode(newCode);
     }
   };
 
-
-    const handleUserUpdateDecision = (choice: "continue" | "cancel") => {
-        if(choice === "continue"){
-            handleEditorChange(leftUICode, "ui", true);
-            setLeftUICode("");
-        }
-        else{
-            if (editorRef.current) {
-                editorRef.current?.setValue(uiCode);
-                setLeftUICode("")
-
-                //trigger update on handle func
-            }
-        }
-        setIsAlertShown(false)
-
+  // Alert response handler
+  const handleUserUpdateDecision = (choice: "continue" | "cancel") => {
+    if (choice === "continue") {
+      handleEditorChange(leftUICode, "ui", true);
+      setLeftUICode("");
+    } else {
+      if (uiCodeTabEditorRef.current) {
+        uiCodeTabEditorRef.current.setValue(uiCode);
+        setLeftUICode("");
+      }
     }
+    setIsAlertShown(false);
+  };
 
-const [codeCopied, setCodeCopied] = useState<"ui"|"skeleton"|null>(null);
-
-  const handleCopy = (str: string, type: "ui" |"skeleton") => {
+  // Copy logic
+  const handleCopy = (str: string, type: "ui" | "skeleton") => {
     navigator.clipboard.writeText(str).then(() => {
       setCodeCopied(type);
       setTimeout(() => setCodeCopied(null), 2000);
     });
   };
+
 
 
   return (
@@ -240,12 +143,12 @@ const [codeCopied, setCodeCopied] = useState<"ui"|"skeleton"|null>(null);
             <div className="flex items-center space-x-2">
               {activeCodeTab === "ui" ? (
                 <>
-                  <Select value={uiConfig.format} onValueChange={setUiConfigFormat}>
+                  <Select value={uiCodeConfig.format} onValueChange={setuiCodeConfigFormat}>
                     <SelectTrigger className="h-7 min-w-[100px] bg-[#3e3e42] border-slate-600 text-white text-xs">
                       <SelectValue placeholder="Format" />
                     </SelectTrigger>
                     <SelectContent className="bg-[#3e3e42]">
-                      {uiConfigFormats.map((el) => (
+                      {uiCodeConfigFormats.map((el) => (
                         <SelectItem className="bg-[#252526] hover:bg-[#252526] data-[state=active]:bg-[#252526] text-white" key={el} value={el}>
                           {el}
                         </SelectItem>
@@ -253,12 +156,12 @@ const [codeCopied, setCodeCopied] = useState<"ui"|"skeleton"|null>(null);
                     </SelectContent>
                   </Select>
 
-                  <Select value={uiConfig.styling} onValueChange={setUiConfigStyling}>
+                  <Select value={uiCodeConfig.styling} onValueChange={setuiCodeConfigStyling}>
                     <SelectTrigger className="h-7 min-w-[100px] bg-[#3e3e42] border-slate-600 text-white text-xs">
                       <SelectValue placeholder="Styling" />
                     </SelectTrigger>
                     <SelectContent className="bg-[#3e3e42]">
-                      {uiConfigStylings.map((el) => (
+                      {uiCodeConfigStylings.map((el) => (
                         <SelectItem className="bg-[#252526] hover:bg-[#252526] data-[state=active]:bg-[#252526] text-white" key={el} value={el}>
                           {el}
                         </SelectItem>
@@ -268,12 +171,12 @@ const [codeCopied, setCodeCopied] = useState<"ui"|"skeleton"|null>(null);
                 </>
               ) : (
                 <>
-                  <Select value={skeletonConfig.format} onValueChange={setSkeletonConfigFormat}>
+                  <Select value={skeletonCodeConfig.format} onValueChange={setSkeletonCodeConfigFormat}>
                     <SelectTrigger className="h-7 min-w-[100px] bg-[#3e3e42] border-slate-600 text-white text-xs">
                       <SelectValue placeholder="Format" />
                     </SelectTrigger>
                     <SelectContent>
-                      {skeletonConfigFormats.map((el) => (
+                      {skeletonCodeConfigFormats.map((el) => (
                         <SelectItem className="bg-[#252526] hover:bg-[#252526] data-[state=active]:bg-[#252526] text-white" key={el} value={el}>
                           {el}
                         </SelectItem>
@@ -281,12 +184,12 @@ const [codeCopied, setCodeCopied] = useState<"ui"|"skeleton"|null>(null);
                     </SelectContent>
                   </Select>
 
-                  <Select value={skeletonConfig.styling} onValueChange={setSkeletonConfigStyling}>
+                  <Select value={skeletonCodeConfig.styling} onValueChange={setSkeletonCodeConfigStyling}>
                     <SelectTrigger className="h-7 min-w-[100px] bg-[#3e3e42] border-slate-600 text-white text-xs">
                       <SelectValue placeholder="Styling" />
                     </SelectTrigger>
                     <SelectContent>
-                      {skeletonConfigStylings.map((el) => (
+                      {skeletonCodeConfigStylings.map((el) => (
                         <SelectItem className="bg-[#252526] hover:bg-[#252526] data-[state=active]:bg-[#252526] text-white" key={el} value={el}>
                           {el}
                         </SelectItem>
@@ -301,7 +204,7 @@ const [codeCopied, setCodeCopied] = useState<"ui"|"skeleton"|null>(null);
           <TabsContent value="ui" className="m-0">
             <div className="flex items-center px-2 pb-3 justify-between">
                 <div className="text-red-500  text-xs rounded-md py-1 px-2 font-semibold">
-                    { uiConfig.errors?.[0]?.message }
+                    { uiCodeConfig.errors?.[0]?.message }
                 </div>
 
                 <button
@@ -334,7 +237,7 @@ const [codeCopied, setCodeCopied] = useState<"ui"|"skeleton"|null>(null);
           <TabsContent value="skeleton" className="m-0">
               <div className="flex items-center px-2 pb-3 justify-between">
                 <div className="text-red-500  text-xs rounded-md py-1 px-2 font-semibold">
-                    { skeletonConfig.errors?.[0]?.message }
+                    { skeletonCodeConfig.errors?.[0]?.message }
                 </div>
 
                 <button

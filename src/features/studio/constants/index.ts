@@ -1,4 +1,5 @@
 import { Monitor, Smartphone, Tablet } from "lucide-react";
+import { CodeFileTabConfig, SkeletonConfig } from "../types";
 
 
 export const skeletonColors = [
@@ -51,3 +52,52 @@ export const headAdditions: Record<typeof stylingFormat, string> = {
   tailwind: `<script src="https://cdn.tailwindcss.com"></script>`,
 };
 
+
+
+
+export const uiCodeConfigFormats = ["html"];
+export const uiCodeConfigStylings = ["tailwind"];
+export const skeletonCodeConfigFormats = ["html", "jsx"];
+export const skeletonCodeConfigStylings = ["tailwind"];
+
+
+export const DEFAULT_UI_CONFIG: CodeFileTabConfig = {
+  format: "html",
+  styling: "tailwind",
+  errors: [],
+};
+
+export const DEFAULT_SKELETON_CONFIG: CodeFileTabConfig = {
+  format: "html",
+  styling: "tailwind",
+  errors: [],
+};
+
+export const DEFAULT_SKELETON_STYLE: SkeletonConfig = {
+  color: "cyan",
+  intensity: 300,
+  defaultBorderRadius: "rounded-md",
+};
+
+export const DEFAULT_HTML_CODE = `<div class="bg-white p-4 rounded-lg shadow-md">
+  <div class="flex items-center gap-4">
+    <div class="h-12 w-12 rounded-full bg-cyan-500 flex items-center justify-center text-white font-bold">
+      JD
+    </div>
+    <div>
+      <h3 class="text-lg font-bold text-slate-800">John Doe</h3>
+      <p class="text-slate-500">Frontend Developer</p>
+    </div>
+  </div>
+  <div class="mt-4">
+    <p class="text-sm text-slate-600">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    </p>
+  </div>
+  <div class="mt-4 flex justify-end">
+    <button class="bg-gradient-to-r from-cyan-500 to-cyan-600 text-white px-4 py-2 rounded-md shadow-sm hover:shadow-md transition-shadow">
+      View Profile
+    </button>
+  </div>
+</div>`

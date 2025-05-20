@@ -22,8 +22,10 @@ export function ActionsSection({
   setLayoutMode,
 }: ActionsSectionProps) {
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  //todo: needs to use react query....
   const generatedSkeletonsCount = 0;
 
+  //todo: need more updates later
   function copySkeletonCode() {
     const code = "// Your skeleton code goes here\nconst example = true;";
     navigator.clipboard

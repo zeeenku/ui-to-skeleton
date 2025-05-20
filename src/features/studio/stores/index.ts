@@ -1,297 +1,146 @@
-import { create } from "zustand"
-import { persist } from "zustand/middleware"
-import { LayoutMode, SkeletonConfig } from "../types";
-
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { CodeFileTabConfig, SkeletonConfig } from "../types";
+import { DEFAULT_HTML_CODE, DEFAULT_SKELETON_CONFIG, DEFAULT_SKELETON_STYLE, DEFAULT_UI_CONFIG } from "../constants";
 
 
 type SkeletonStore = {
-  // UI Format and Styling Options
   skeletonConfig: SkeletonConfig;
-  uiFormat: string
-  stylingFormat: string
-  exportFormat: string
-  setUiFormat: (format: string) => void
-  setStylingFormat: (format: string) => void
-  setExportFormat: (format: string) => void
+  uiCodeConfig: CodeFileTabConfig;
+  skeletonCodeConfig: CodeFileTabConfig;
 
-  // Code state
-  uiCode: string
-  skeletonCode: string
-  skeletonGenerated: boolean
-  skeletonModified: boolean
-  copied: boolean
-  isValid: boolean
-  setUiCode: (code: string) => void
-  setSkeletonCode: (code: string) => void
-  setSkeletonGenerated: (generated: boolean) => void
-  setSkeletonModified: (modified: boolean) => void
-  setCopied: (copied: boolean) => void
-  setIsValid: (isValid: boolean) => void
-  setSkeletonConfig: (config: Partial<SkeletonConfig>) => void
+  uiCode: string;
+  skeletonCode: string;
 
-  // Skeleton Configuration
-  skeletonColor: string
-  skeletonBorder: string
-  skeletonBorderColor: string
-  maxColorDegree: number
-  defaultBgClass: string
-  setSkeletonColor: (color: string) => void
-  setSkeletonBorder: (border: string) => void
-  setSkeletonBorderColor: (color: string) => void
-  setMaxColorDegree: (degree: number) => void
-  setDefaultBgClass: (bgClass: string) => void
+  skeletonGenerated: boolean;
+  skeletonModified: boolean;
+  copied: boolean;
+  isValid: boolean;
 
-  // UI State
-  activeTab: string
-  activeCodeTab: string
-  fullPreview: boolean
-  showEditors: boolean
-  generatedCount: number
-  previewDevice: string
-  shareDialogOpen: boolean
-  showToast: boolean
-  toastMessage: string
-  unsavedChangesAlert: boolean
-  setActiveTab: (tab: string) => void
-  setActiveCodeTab: (tab: string) => void
-  setFullPreview: (preview: boolean) => void
-  setShowEditors: (show: boolean) => void
-  incrementGeneratedCount: () => void
-  setPreviewDevice: (device: string) => void
-  setShareDialogOpen: (open: boolean) => void
-  setShowToast: (show: boolean, message?: string) => void
-  setUnsavedChangesAlert: (show: boolean) => void
+  setUiCode: (code: string) => void;
+  setSkeletonCode: (code: string) => void;
 
-  // Add these to your SkeletonStore interface
-  layoutMode: LayoutMode
-  setLayoutMode: (mode: LayoutMode) => void
+  setUiCodeConfig: (config: Partial<CodeFileTabConfig>) => void;
+  setSkeletonCodeConfig: (config: Partial<CodeFileTabConfig>) => void;
+  setSkeletonConfig: (config: Partial<SkeletonConfig>) => void;
 
-  // Actions
-  generateSkeleton: () => void
-  copySkeletonCode: () => void
-}
+  generateSkeleton: () => void;
+  copySkeletonCode: () => void;
 
-const DEFAULT_HTML_CODE = `<div class="bg-white p-4 rounded-lg shadow-md">
-  <div class="flex items-center gap-4">
-    <div class="h-12 w-12 rounded-full bg-cyan-500 flex items-center justify-center text-white font-bold">
-      JD
-    </div>
-    <div>
-      <h3 class="text-lg font-bold text-slate-800">John Doe</h3>
-      <p class="text-slate-500">Frontend Developer</p>
-    </div>
-  </div>
-  <div class="mt-4">
-    <p class="text-sm text-slate-600">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-      Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    </p>
-  </div>
-  <div class="mt-4 flex justify-end">
-    <button class="bg-gradient-to-r from-cyan-500 to-cyan-600 text-white px-4 py-2 rounded-md shadow-sm hover:shadow-md transition-shadow">
-      View Profile
-    </button>
-  </div>
-</div>`
-
-const DEFAULT_JSX_CODE = `<div className="bg-white p-4 rounded-lg shadow-md">
-  <div className="flex items-center gap-4">
-    <div className="h-12 w-12 rounded-full bg-cyan-500 flex items-center justify-center text-white font-bold">
-      JD
-    </div>
-    <div>
-      <h3 className="text-lg font-bold text-slate-800">John Doe</h3>
-      <p className="text-slate-500">Frontend Developer</p>
-    </div>
-  </div>
-  <div className="mt-4">
-    <p className="text-sm text-slate-600">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-      Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    </p>
-  </div>
-  <div className="mt-4 flex justify-end">
-    <button className="bg-gradient-to-r from-cyan-500 to-cyan-600 text-white px-4 py-2 rounded-md shadow-sm hover:shadow-md transition-shadow">
-      View Profile
-    </button>
-  </div>
-</div>`
+  setSkeletonGenerated: (v: boolean) => void;
+  setSkeletonModified: (v: boolean) => void;
+  setCopied: (v: boolean) => void;
+  setIsValid: (v: boolean) => void;
+};
 
 export const useSkeletonStore = create<SkeletonStore>()(
   persist(
     (set, get) => ({
-      // UI Format and Styling Options
-      uiFormat: "jsx",
-      skeletonConfig:{
-        color: "cyan",
-        intensity: 300,
-        defaultBorderRadius:"rounded-md",
-      },
-      stylingFormat: "tailwind",
-      exportFormat: "jsx",
-      setUiFormat: (format) => {
-        set({ uiFormat: format })
-        // Update code when UI format changes
-        if (format === "html") {
-          set({ uiCode: DEFAULT_HTML_CODE })
-        } else {
-          set({ uiCode: DEFAULT_JSX_CODE })
-        }
-      },
-      setStylingFormat: (format) => set({ stylingFormat: format }),
-      setExportFormat: (format) => set({ exportFormat: format }),
+      skeletonConfig: DEFAULT_SKELETON_STYLE,
+      uiCodeConfig: DEFAULT_UI_CONFIG,
+      skeletonCodeConfig: DEFAULT_SKELETON_CONFIG,
 
-      // Code state
-      uiCode: DEFAULT_JSX_CODE,
+      uiCode: DEFAULT_HTML_CODE,
       skeletonCode: "",
+
       skeletonGenerated: false,
       skeletonModified: false,
       copied: false,
       isValid: true,
-      setSkeletonConfig: (config) =>
-    set((state) => ({
-      skeletonConfig: {
-        ...state.skeletonConfig,
-        ...config,
-      },
-    })),
-      setUiCode: (code) => {
-        const { skeletonGenerated, skeletonModified } = get()
-        set({ uiCode: code })
 
-        // If skeleton has been generated but not modified, auto-generate new skeleton
+      setUiCode: (code) => {
+        const { skeletonGenerated, skeletonModified } = get();
+        set({ uiCode: code });
+
         if (skeletonGenerated && !skeletonModified) {
-          get().generateSkeleton()
-        } else if (skeletonGenerated && skeletonModified) {
-          // If skeleton has been modified, show alert
-          set({ unsavedChangesAlert: true })
+          get().generateSkeleton();
         }
       },
-      setSkeletonCode: (code) => set({ skeletonCode: code, skeletonModified: true }),
-      setSkeletonGenerated: (generated) => set({ skeletonGenerated: generated }),
-      setSkeletonModified: (modified) => set({ skeletonModified: modified }),
-      setCopied: (copied) => set({ copied }),
-      setIsValid: (isValid) => set({ isValid }),
 
-      // Skeleton Configuration
-      skeletonColor: "gray",
-      skeletonBorder: "rounded-md",
-      skeletonBorderColor: "border-gray-200",
-      maxColorDegree: 200,
-      defaultBgClass: "bg-white",
-      setSkeletonColor: (color) => set({ skeletonColor: color }),
-      setSkeletonBorder: (border) => set({ skeletonBorder: border }),
-      setSkeletonBorderColor: (color) => set({ skeletonBorderColor: color }),
-      setMaxColorDegree: (degree) => set({ maxColorDegree: degree }),
-      setDefaultBgClass: (bgClass) => set({ defaultBgClass: bgClass }),
+      setSkeletonCode: (code) => {
+        set({ skeletonCode: code, skeletonModified: true });
+      },
 
-      // UI State
-      activeTab: "ui",
-      activeCodeTab: "ui",
-      fullPreview: false,
-      showEditors: true,
-      generatedCount: 0,
-      previewDevice: "desktop",
-      shareDialogOpen: false,
-      showToast: false,
-      toastMessage: "",
-      unsavedChangesAlert: false,
-      setActiveTab: (tab) => set({ activeTab: tab }),
-      setActiveCodeTab: (tab) => set({ activeCodeTab: tab }),
-      setFullPreview: (preview) => set({ fullPreview: preview }),
-      setShowEditors: (show) => set({ showEditors: show }),
-      incrementGeneratedCount: () => set((state) => ({ generatedCount: state.generatedCount + 1 })),
-      setPreviewDevice: (device) => set({ previewDevice: device }),
-      setShareDialogOpen: (open) => set({ shareDialogOpen: open }),
-      setShowToast: (show, message = "") => set({ showToast: show, toastMessage: message }),
-      setUnsavedChangesAlert: (show) => set({ unsavedChangesAlert: show }),
-
-      // Add these to your store implementation
-      layoutMode: "split",
-      setLayoutMode: (mode) => set({ layoutMode: mode }),
-
-      // Actions
-      generateSkeleton: () => {
-        const { skeletonColor, skeletonBorder, skeletonBorderColor, maxColorDegree, defaultBgClass, exportFormat } =
-          get()
-
+      setUiCodeConfig: (config) =>
         set((state) => ({
-          generatedCount: state.generatedCount + 1,
+          uiCodeConfig: {
+            ...state.uiCodeConfig,
+            ...config,
+          },
+        })),
+
+      setSkeletonCodeConfig: (config) =>
+        set((state) => ({
+          skeletonCodeConfig: {
+            ...state.skeletonCodeConfig,
+            ...config,
+          },
+        })),
+
+      setSkeletonConfig: (config) =>
+        set((state) => ({
+          skeletonConfig: {
+            ...state.skeletonConfig,
+            ...config,
+          },
+        })),
+
+      generateSkeleton: () => {
+        const { skeletonConfig, uiCodeConfig } = get();
+        const { color, intensity, defaultBorderRadius: border } = skeletonConfig;
+        const base = uiCodeConfig.format === "html" ? "class" : "className";
+
+        const skeleton = `
+<div ${base}="p-4 ${border} border border-gray-200 shadow-sm bg-white">
+  <div ${base}="flex items-center gap-4">
+    <div ${base}="h-12 w-12 rounded-full bg-${color}-${intensity} animate-pulse"></div>
+    <div ${base}="space-y-2">
+      <div ${base}="h-5 w-32 bg-${color}-${intensity} ${border} animate-pulse"></div>
+      <div ${base}="h-4 w-40 bg-${color}-${intensity} ${border} animate-pulse"></div>
+    </div>
+  </div>
+  <div ${base}="mt-4 space-y-2">
+    <div ${base}="h-3 w-full bg-${color}-${intensity} ${border} animate-pulse"></div>
+    <div ${base}="h-3 w-full bg-${color}-${intensity} ${border} animate-pulse"></div>
+    <div ${base}="h-3 w-3/4 bg-${color}-${intensity} ${border} animate-pulse"></div>
+  </div>
+  <div ${base}="mt-4 flex justify-end">
+    <div ${base}="h-10 w-28 bg-${color}-${intensity} ${border} animate-pulse"></div>
+  </div>
+</div>`.trim();
+
+        set({
+          skeletonCode: skeleton,
           skeletonGenerated: true,
           skeletonModified: false,
-          unsavedChangesAlert: false,
-        }))
-
-        // Generate skeleton code based on export format
-        if (exportFormat === "html") {
-          set({
-            skeletonCode: `<div class="p-4 ${skeletonBorder} border ${skeletonBorderColor} shadow-sm ${defaultBgClass}">
-  <div class="flex items-center gap-4">
-    <div class="h-12 w-12 rounded-full bg-${skeletonColor}-${maxColorDegree} animate-pulse"></div>
-    <div class="space-y-2">
-      <div class="h-5 w-32 bg-${skeletonColor}-${maxColorDegree} ${skeletonBorder} animate-pulse"></div>
-      <div class="h-4 w-40 bg-${skeletonColor}-${maxColorDegree} ${skeletonBorder} animate-pulse"></div>
-    </div>
-  </div>
-  <div class="mt-4 space-y-2">
-    <div class="h-3 w-full bg-${skeletonColor}-${maxColorDegree} ${skeletonBorder} animate-pulse"></div>
-    <div class="h-3 w-full bg-${skeletonColor}-${maxColorDegree} ${skeletonBorder} animate-pulse"></div>
-    <div class="h-3 w-3/4 bg-${skeletonColor}-${maxColorDegree} ${skeletonBorder} animate-pulse"></div>
-  </div>
-  <div class="mt-4 flex justify-end">
-    <div class="h-10 w-28 bg-${skeletonColor}-${maxColorDegree} ${skeletonBorder} animate-pulse"></div>
-  </div>
-</div>`,
-          })
-        } else {
-          set({
-            skeletonCode: `<div className="p-4 ${skeletonBorder} border ${skeletonBorderColor} shadow-sm ${defaultBgClass}">
-  <div className="flex items-center gap-4">
-    <div className="h-12 w-12 rounded-full bg-${skeletonColor}-${maxColorDegree} animate-pulse"></div>
-    <div className="space-y-2">
-      <div className="h-5 w-32 bg-${skeletonColor}-${maxColorDegree} ${skeletonBorder} animate-pulse"></div>
-      <div className="h-4 w-40 bg-${skeletonColor}-${maxColorDegree} ${skeletonBorder} animate-pulse"></div>
-    </div>
-  </div>
-  <div className="mt-4 space-y-2">
-    <div className="h-3 w-full bg-${skeletonColor}-${maxColorDegree} ${skeletonBorder} animate-pulse"></div>
-    <div className="h-3 w-full bg-${skeletonColor}-${maxColorDegree} ${skeletonBorder} animate-pulse"></div>
-    <div className="h-3 w-3/4 bg-${skeletonColor}-${maxColorDegree} ${skeletonBorder} animate-pulse"></div>
-  </div>
-  <div className="mt-4 flex justify-end">
-    <div className="h-10 w-28 bg-${skeletonColor}-${maxColorDegree} ${skeletonBorder} animate-pulse"></div>
-  </div>
-</div>`,
-          })
-        }
+        });
       },
 
       copySkeletonCode: () => {
-        const { skeletonCode } = get()
+        const { skeletonCode } = get();
         if (typeof navigator !== "undefined") {
-          navigator.clipboard.writeText(skeletonCode)
-          set({
-            copied: true,
-            showToast: true,
-            toastMessage: "Skeleton code copied to clipboard!",
-          })
-          setTimeout(() => set({ copied: false, showToast: false }), 2000)
+          navigator.clipboard.writeText(skeletonCode);
+          set({ copied: true });
+          setTimeout(() => set({ copied: false }), 2000);
         }
       },
+
+      setSkeletonGenerated: (v) => set({ skeletonGenerated: v }),
+      setSkeletonModified: (v) => set({ skeletonModified: v }),
+      setCopied: (v) => set({ copied: v }),
+      setIsValid: (v) => set({ isValid: v }),
     }),
     {
       name: "skeleton-store",
       partialize: (state) => ({
-        generatedCount: state.generatedCount,
-        skeletonColor: state.skeletonColor,
-        skeletonBorder: state.skeletonBorder,
-        skeletonBorderColor: state.skeletonBorderColor,
-        maxColorDegree: state.maxColorDegree,
-        defaultBgClass: state.defaultBgClass,
-        uiFormat: state.uiFormat,
-        stylingFormat: state.stylingFormat,
-        exportFormat: state.exportFormat,
+        uiCodeConfig: state.uiCodeConfig,
+        skeletonCodeConfig: state.skeletonCodeConfig,
+        skeletonConfig: state.skeletonConfig,
+        uiCode: state.uiCode,
+        skeletonCode: state.skeletonCode,
+        skeletonGenerated: state.skeletonGenerated,
+        skeletonModified: state.skeletonModified,
       }),
-    },
-  ),
-)
+    }
+  )
+);

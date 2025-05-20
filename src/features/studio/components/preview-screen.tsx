@@ -1,5 +1,7 @@
+"use client";
+
 import { cn } from "@/lib/utils";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AllDevicesType, devices, headAdditions, stylingFormat } from "../constants";
 
 interface PreviewScreenProps {
@@ -7,7 +9,6 @@ interface PreviewScreenProps {
   previewDevice: AllDevicesType;
   code: string;
 }
-
 export const PreviewScreen: React.FC<PreviewScreenProps> = ({
   title,
   previewDevice,
@@ -15,14 +16,26 @@ export const PreviewScreen: React.FC<PreviewScreenProps> = ({
 }) => {
   const currentDevice = devices.find(d => d.value === previewDevice)!;
 
-  function getHeight(): number {
-    const dvh = window.innerHeight;
-    const remInPx = parseFloat(getComputedStyle(document.documentElement).fontSize);
-    const remValue = 9 * remInPx;
-    return dvh - remValue;
-  }
+  const [height, setHeight] = useState<number | null>(null);
+
+  useEffect(() => {
+    const calculateHeight = () => {
+      const dvh = window.innerHeight;
+      const remInPx = parseFloat(getComputedStyle(document.documentElement).fontSize);
+      const remValue = 9 * remInPx;
+      setHeight(dvh - remValue);
+    };
+
+    calculateHeight();
+    window.addEventListener("resize", calculateHeight);
+
+    return () => {
+      window.removeEventListener("resize", calculateHeight);
+    };
+  }, []);
 
   const srcDoc = useMemo(() => {
+    if (height === null) return '';
     return `
       <html>
         <head>
@@ -32,8 +45,8 @@ export const PreviewScreen: React.FC<PreviewScreenProps> = ({
             body {
               margin: 0;
               padding: 0;
-              height: ${getHeight()}px;
-              max-height: ${getHeight()}px;
+              height: ${height}px;
+              max-height: ${height}px;
               overflow-y: auto;
               width: 100%;
               border-radius: 16px;
@@ -49,7 +62,7 @@ export const PreviewScreen: React.FC<PreviewScreenProps> = ({
         </body>
       </html>
     `;
-  }, [code, previewDevice]);
+  }, [code, previewDevice, height]);
 
   return (
     <div className="flex items-center justify-center h-full">
@@ -59,11 +72,13 @@ export const PreviewScreen: React.FC<PreviewScreenProps> = ({
           `max-w-[${currentDevice.size}px] w-full`
         )}
       >
-        <iframe
-          title={title}
-          srcDoc={srcDoc}
-          className="w-full h-full border-0"
-        />
+        {height !== null && (
+          <iframe
+            title={title}
+            srcDoc={srcDoc}
+            className="w-full h-full border-0"
+          />
+        )}
       </div>
     </div>
   );
