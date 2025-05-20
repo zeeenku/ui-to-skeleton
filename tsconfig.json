@@ -4,6 +4,7 @@
     "noImplicitAny": true,
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
+    "types": ["node"],  // Add "node" here
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,

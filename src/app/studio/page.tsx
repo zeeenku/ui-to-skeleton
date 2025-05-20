@@ -10,13 +10,16 @@ import { Previews } from "@/features/studio/components/previews"
 import { LayoutMode } from "@/features/studio/types"
 import { useLocalStorage } from "@/hooks/use-local-storage"
 import { ActionsSection } from "@/features/studio/components/actions-section"
-
+import { QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 
 export default function CodeEditor() {
 
+   const queryClient = new QueryClient();
   const [layoutMode, setLayoutMode] = useLocalStorage<LayoutMode>("studio_split_mode","split");
 
   return (
+    <QueryClientProvider client={queryClient}>
     <div className="flex flex-col h-full bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
       <Header/>
 
@@ -58,5 +61,7 @@ export default function CodeEditor() {
       </div>
 
     </div>
+
+    </QueryClientProvider>
   )
 }

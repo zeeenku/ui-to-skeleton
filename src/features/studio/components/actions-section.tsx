@@ -12,6 +12,7 @@ import { useState } from "react";
 import { getOpenIssueLInk } from "../constants";
 import { LayoutMode } from "../types";
 import { useSkeletonStore } from "../stores";
+import { useSkeletonsCount } from "../api/skeletons-count";
 
 interface ActionsSectionProps {
   layoutMode: LayoutMode;
@@ -24,11 +25,9 @@ export function ActionsSection({
 }: ActionsSectionProps) {
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   //todo: needs to use react query....
-  const generatedSkeletonsCount = 0;
+    const { data: generatedSkeletonsCount, isLoading, isError } = useSkeletonsCount();
 
-    const {
-      copySkeletonCode
-    } = useSkeletonStore();
+    const copySkeletonCode = () => {}
 
   return (
     <div className="flex flex-wrap gap-2 items-center justify-between mb-4">
@@ -40,7 +39,7 @@ export function ActionsSection({
         />
 
         <div className="text-sm text-slate-500 bg-white/80 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-sm border border-slate-200/50">
-          <span className="font-medium text-cyan-600">{generatedSkeletonsCount}</span>{" "}
+          <span className="font-medium text-cyan-600">{isLoading ? "..." :  generatedSkeletonsCount}</span>{" "}
           skeletons generated
         </div>
       </div>
