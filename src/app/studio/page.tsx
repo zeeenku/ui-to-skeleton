@@ -22,7 +22,6 @@ export default function CodeEditor() {
 
       <div className="container mx-auto px-4 py-6">
 
-        {/* alpha Alert */}
         <Alert className="bg-gradient-to-r from-cyan-50 to-cyan-100/70 border-cyan-200/50 text-cyan-800 mb-6 shadow-sm">
           <AlertTriangle className="h-4 w-4 mr-2" />
           <AlertDescription>
@@ -30,7 +29,6 @@ export default function CodeEditor() {
           </AlertDescription>
         </Alert>
 
-        
         <SkeletonConfiguration />
 
         <div className="mb-8">

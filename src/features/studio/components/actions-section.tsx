@@ -11,6 +11,7 @@ import LayoutToggle from "@/components/layout-toggle";
 import { useState } from "react";
 import { getOpenIssueLInk } from "../constants";
 import { LayoutMode } from "../types";
+import { useSkeletonStore } from "../stores";
 
 interface ActionsSectionProps {
   layoutMode: LayoutMode;
@@ -25,18 +26,9 @@ export function ActionsSection({
   //todo: needs to use react query....
   const generatedSkeletonsCount = 0;
 
-  //todo: need more updates later
-  function copySkeletonCode() {
-    const code = "// Your skeleton code goes here\nconst example = true;";
-    navigator.clipboard
-      .writeText(code)
-      .then(() => {
-        alert("Skeleton code copied to clipboard!");
-      })
-      .catch((err) => {
-        console.error("Failed to copy:", err);
-      });
-  }
+    const {
+      copySkeletonCode
+    } = useSkeletonStore();
 
   return (
     <div className="flex flex-wrap gap-2 items-center justify-between mb-4">
