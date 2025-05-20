@@ -7,7 +7,8 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { useSkeletonStore } from "../stores/index";
-import { skeletonCodeConfigFormats, SkeletonCodeConfigFormats, skeletonCodeConfigStylings, SkeletonCodeConfigStylings, uiCodeConfigFormats, UiCodeConfigFormats, uiCodeConfigStylings, UiCodeConfigStylings } from "../types";
+import { skeletonCodeConfigFormats, SkeletonCodeConfigFormats, skeletonCodeConfigStylings, 
+  SkeletonCodeConfigStylings, uiCodeConfigFormats, UiCodeConfigFormats, uiCodeConfigStylings, UiCodeConfigStylings } from "../types";
 
 interface CodeConfigSelectorProps {
   type: "ui" | "skeleton";

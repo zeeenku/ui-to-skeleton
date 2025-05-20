@@ -84,36 +84,52 @@ export const useSkeletonStore = create<SkeletonStore>()(
         }
       },
 
-      setUiCodeConfig: (config) => {
-        set((state) => {
-          const updatedConfig = { ...state.uiCodeConfig, ...config };
+     setUiCodeConfig: (config) => {
+        const state = get(); 
+
+        const newUiCode = convertionController(
+          state.uiCode, 
+          state.uiCodeConfig.format,
+          config.format ?? state.uiCodeConfig.format,
+          state.uiCodeConfig.styling,
+          config.styling ?? state.uiCodeConfig.styling
+        );
+
+        set((prevState) => {
+          const updatedConfig = { ...prevState.uiCodeConfig, ...config };
           return {
             uiCodeConfig: updatedConfig,
-            uiCode: convertionController(
-              state.uiCode,
-              state.uiCodeConfig.format,
-              config.format ?? state.uiCodeConfig.format,
-              state.uiCodeConfig.styling,
-              config.styling ?? state.uiCodeConfig.styling
-            ),
           };
         });
+
+        const { uiEditorRef } = get();
+        if (uiEditorRef) {
+          uiEditorRef.setValue(newUiCode);
+        }
       },
 
-      setSkeletonCodeConfig: (config) => {
-        set((state) => {
-          const updatedConfig = { ...state.skeletonCodeConfig, ...config };
+        setSkeletonCodeConfig: (config) => {
+        const state = get(); 
+
+        const newSkeletonCode = convertionController(
+          state.skeletonCode, 
+          state.skeletonCodeConfig.format,
+          config.format ?? state.skeletonCodeConfig.format,
+          state.skeletonCodeConfig.styling,
+          config.styling ?? state.skeletonCodeConfig.styling
+        );
+
+        set((prevState) => {
+          const updatedConfig = { ...prevState.skeletonCodeConfig, ...config };
           return {
             skeletonCodeConfig: updatedConfig,
-            skeletonCode: convertionController(
-              state.skeletonCode,
-              state.skeletonCodeConfig.format,
-              config.format ?? state.skeletonCodeConfig.format,
-              state.skeletonCodeConfig.styling,
-              config.styling ?? state.skeletonCodeConfig.styling
-            ),
           };
         });
+
+        const { skeletonEditorRef } = get();
+        if (skeletonEditorRef) {
+          skeletonEditorRef.setValue(newSkeletonCode);
+        }
       },
 
       setUiCodeFromEditor: async (code) => {

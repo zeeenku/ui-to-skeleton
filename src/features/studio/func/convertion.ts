@@ -29,7 +29,9 @@ export const convertionController = (code: string, inputFormat: UiCodeConfigForm
 
         
         }
-
+        console.log(inputFormat)
+        console.log(exportFormat)
+        console.log(exportSTr)
         return exportSTr;
      }
 
