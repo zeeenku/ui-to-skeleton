@@ -9,6 +9,11 @@ const config = {
     "./src/**/*.{ts,tsx}",
     "*.{js,ts,jsx,tsx,mdx}",
   ],
+  safelist: [
+    {
+      pattern: /^bg-(red|blue|green|yellow|purple|pink|gray|slate|zinc|neutral|orange|amber|lime|emerald|teal|cyan|sky|indigo|violet|fuchsia|rose)-500$/,
+    },
+  ],
   prefix: "",
   theme: {
     container: {
