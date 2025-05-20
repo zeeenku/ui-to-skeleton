@@ -10,16 +10,14 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
+import { useSkeletonStore } from "../stores";
 
-type Props = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onDecision: (choice: "continue" | "cancel") => void;
-};
 
-export function UpdateUITabAlert({ open, onOpenChange, onDecision }: Props) {
+
+export function UpdateUITabAlert() {
+  const {uiSkeletonContraduction, solveContraduction} = useSkeletonStore();
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
+    <AlertDialog open={uiSkeletonContraduction} onOpenChange={()=>{}}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Update UI Tab?</AlertDialogTitle>
@@ -28,10 +26,10 @@ export function UpdateUITabAlert({ open, onOpenChange, onDecision }: Props) {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => onDecision("cancel")}>
+          <AlertDialogCancel onClick={() => solveContraduction("cancel")}>
             Cancel
           </AlertDialogCancel>
-          <AlertDialogAction onClick={() => onDecision("continue")}>
+          <AlertDialogAction onClick={() => solveContraduction("continue")}>
             Continue
           </AlertDialogAction>
         </AlertDialogFooter>
