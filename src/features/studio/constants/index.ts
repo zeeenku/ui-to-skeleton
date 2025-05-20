@@ -1,15 +1,5 @@
 import { Monitor, Smartphone, Tablet } from "lucide-react";
-import { CodeFileTabConfig, SkeletonConfig } from "../types";
-
-
-export const skeletonColors = [
-    "slate", "gray", "zinc", "neutral", "stone", "red", "orange", "amber",
-    "yellow", "lime", "green", "emerald", "teal", "cyan", "sky", "blue",
-    "indigo", "violet", "purple", "fuchsia", "pink", "rose",
-];
-
-export const skeletonIntensities = ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"];
-export const skeletonBorderRadiusSizes = ["rounded-none", "rounded-sm", "rounded-md", "rounded-lg", "rounded-full"];
+import { CodeFileTabConfig, SkeletonCodeConfigStylings, SkeletonConfig, UiCodeConfigStylings } from "../types";
 
 export const getOpenIssueLInk = () => {
   return "https://github.com/zeeenku/ui-to-skeleton/issues/new";
@@ -46,19 +36,10 @@ export const devices : DeviceType[] = [
 
 export type AllDevicesType = (typeof devices)[number]["value"];
 
-export const stylingFormat: 'tailwind' = 'tailwind';
 
-export const headAdditions: Record<typeof stylingFormat, string> = {
+export const stylesPreviewDependencies: Record<UiCodeConfigStylings | SkeletonCodeConfigStylings, string> = {
   tailwind: `<script src="https://cdn.tailwindcss.com"></script>`,
 };
-
-
-
-
-export const uiCodeConfigFormats = ["html"];
-export const uiCodeConfigStylings = ["tailwind"];
-export const skeletonCodeConfigFormats = ["html", "jsx"];
-export const skeletonCodeConfigStylings = ["tailwind"];
 
 
 export const DEFAULT_UI_CONFIG: CodeFileTabConfig = {
@@ -75,9 +56,10 @@ export const DEFAULT_SKELETON_CONFIG: CodeFileTabConfig = {
 
 export const DEFAULT_SKELETON_STYLE: SkeletonConfig = {
   color: "cyan",
-  intensity: 300,
+  intensity: "300",
   defaultBorderRadius: "rounded-md",
 };
+
 
 export const DEFAULT_HTML_CODE = `<div class="bg-white p-4 rounded-lg shadow-md">
   <div class="flex items-center gap-4">

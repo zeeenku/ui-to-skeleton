@@ -2,22 +2,33 @@
 
 import { cn } from "@/lib/utils";
 import { useEffect, useMemo, useState } from "react";
-import { AllDevicesType, devices, headAdditions, stylingFormat } from "../constants";
+import { AllDevicesType, devices, stylesPreviewDependencies } from "../constants";
+import { useSkeletonStore } from "../stores";
 
 interface PreviewScreenProps {
   title: string;
   previewDevice: AllDevicesType;
   code: string;
+  type: "ui" | "skeleton";
 }
 export const PreviewScreen: React.FC<PreviewScreenProps> = ({
   title,
   previewDevice,
   code,
+  type
 }) => {
   const currentDevice = devices.find(d => d.value === previewDevice)!;
 
   const [height, setHeight] = useState<number | null>(null);
-
+  const {
+    uiCodeConfig,
+    skeletonCodeConfig,
+  } = useSkeletonStore();
+  
+  const headAdditions = useMemo(()=>{
+    if(type == "ui") return stylesPreviewDependencies[uiCodeConfig.styling];
+    if(type == "skeleton") return stylesPreviewDependencies[skeletonCodeConfig.styling];
+  }, [type])
   useEffect(() => {
     const calculateHeight = () => {
       const dvh = window.innerHeight;
@@ -40,7 +51,7 @@ export const PreviewScreen: React.FC<PreviewScreenProps> = ({
       <html>
         <head>
           <meta name="viewport" content="width=${currentDevice.size}, initial-scale=1.0">
-          ${headAdditions[stylingFormat]}
+          ${headAdditions}
           <style>
             body {
               margin: 0;

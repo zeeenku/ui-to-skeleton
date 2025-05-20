@@ -15,6 +15,7 @@ export function Previews(){
   const [activeTab, setActiveTab] =  useLocalStorage<string>("preview_ui_tab", "ui");
   const [previewDevice, setPreviewDevice] = useLocalStorage<AllDevicesType>("preview_device", devices[0].value);
 
+  //todo: make sure there is 2 skeleton code: 1 for export and 1 for preview....
   const {
     uiCode,
     skeletonCode,
@@ -58,10 +59,11 @@ export function Previews(){
                       </div>
                       <div className="h-[calc(100dvh-9rem)] overflow-auto bg-white">
                         <TabsContent value="ui" className="mt-0 h-full">
-                            <PreviewScreen title="UI Preview" previewDevice={previewDevice} code={uiCode}/>
+                            <PreviewScreen type="ui" title="UI Preview" previewDevice={previewDevice} code={uiCode}/>
                         </TabsContent>
                         <TabsContent value="skeleton" className="mt-0 h-full">
-                            <PreviewScreen title="SKeleton Preview" previewDevice={previewDevice} code={skeletonCode}/>                        </TabsContent>
+                            <PreviewScreen type="skeleton" title="SKeleton Preview" previewDevice={previewDevice} code={skeletonCode}/>                        
+                        </TabsContent>
                       </div>
                     </Tabs>
                   </div>

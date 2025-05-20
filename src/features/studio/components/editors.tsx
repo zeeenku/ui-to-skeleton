@@ -10,8 +10,10 @@ import { UpdateUITabAlert } from "./code-tab-update-alert"
 import { Copy } from "lucide-react";
 
 import { useSkeletonStore } from "../stores";
-import { skeletonCodeConfigFormats, skeletonCodeConfigStylings, uiCodeConfigFormats, uiCodeConfigStylings } from "../constants";
 import { validateFormat } from "../func/validation";
+import { Editor } from "./editor";
+import { uiCodeConfigFormats, uiCodeConfigStylings, skeletonCodeConfigFormats, skeletonCodeConfigStylings } from "../types";
+import { CodeConfigSelector } from "./code-config-selector";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false })
 
@@ -128,9 +130,12 @@ export function Editors() {
         onOpenChange={(open)=>setIsAlertShown(open)}
         onDecision={handleUserUpdateDecision}
       />
+
       <div className="bg-[#1e1e1e] overflow-hidden rounded-xl border border-[#1e1e1e] shadow-lg transition-all duration-300 hover:shadow-xl h-[calc(100dvh-4rem)]">
         <Tabs value={activeCodeTab} onValueChange={setActiveCodeTab} className="h-full bg-[#1e1e1e] border border-[#1e1e1e]">
           <div className="border-none p-3 border-b bg-[#2d2d30] text-sm text-white flex items-center justify-between">
+            
+            
             <TabsList className="grid w-48 grid-cols-2 bg-[#3e3e42]">
               <TabsTrigger value="ui" className="text-white data-[state=active]:bg-[#1e1e1e]">
                 UI
@@ -141,130 +146,30 @@ export function Editors() {
             </TabsList>
 
             <div className="flex items-center space-x-2">
-              {activeCodeTab === "ui" ? (
-                <>
-                  <Select value={uiCodeConfig.format} onValueChange={setuiCodeConfigFormat}>
-                    <SelectTrigger className="h-7 min-w-[100px] bg-[#3e3e42] border-slate-600 text-white text-xs">
-                      <SelectValue placeholder="Format" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-[#3e3e42]">
-                      {uiCodeConfigFormats.map((el) => (
-                        <SelectItem className="bg-[#252526] hover:bg-[#252526] data-[state=active]:bg-[#252526] text-white" key={el} value={el}>
-                          {el}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Select value={uiCodeConfig.styling} onValueChange={setuiCodeConfigStyling}>
-                    <SelectTrigger className="h-7 min-w-[100px] bg-[#3e3e42] border-slate-600 text-white text-xs">
-                      <SelectValue placeholder="Styling" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-[#3e3e42]">
-                      {uiCodeConfigStylings.map((el) => (
-                        <SelectItem className="bg-[#252526] hover:bg-[#252526] data-[state=active]:bg-[#252526] text-white" key={el} value={el}>
-                          {el}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </>
-              ) : (
-                <>
-                  <Select value={skeletonCodeConfig.format} onValueChange={setSkeletonCodeConfigFormat}>
-                    <SelectTrigger className="h-7 min-w-[100px] bg-[#3e3e42] border-slate-600 text-white text-xs">
-                      <SelectValue placeholder="Format" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {skeletonCodeConfigFormats.map((el) => (
-                        <SelectItem className="bg-[#252526] hover:bg-[#252526] data-[state=active]:bg-[#252526] text-white" key={el} value={el}>
-                          {el}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Select value={skeletonCodeConfig.styling} onValueChange={setSkeletonCodeConfigStyling}>
-                    <SelectTrigger className="h-7 min-w-[100px] bg-[#3e3e42] border-slate-600 text-white text-xs">
-                      <SelectValue placeholder="Styling" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {skeletonCodeConfigStylings.map((el) => (
-                        <SelectItem className="bg-[#252526] hover:bg-[#252526] data-[state=active]:bg-[#252526] text-white" key={el} value={el}>
-                          {el}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </>
-              )}
+                <CodeConfigSelector/>
             </div>
-          </div>
 
-          <TabsContent value="ui" className="m-0">
-            <div className="flex items-center px-2 pb-3 justify-between">
-                <div className="text-red-500  text-xs rounded-md py-1 px-2 font-semibold">
-                    { uiCodeConfig.errors?.[0]?.message }
-                </div>
+        <TabsContent value="ui" className="m-0">
+          <Editor
+            value={uiCode}
+            onChange={(val) => handleEditorChange(val, "ui")}
+            error={uiCodeConfig.errors?.[0]?.message}
+            onCopy={() => handleCopy(uiCode, "ui")}
+            copied={codeCopied === "ui"}
+            onMount={handleEditorDidMount}
+          />
+        </TabsContent>
 
-                <button
-                    onClick={() => handleCopy(uiCode,"ui")}
-                    className="ml-4 flex justify-center items-center space-x-1 bg-[#3e3e42] rounded-md py-1 px-2 text-white text-xs"
-                >
-                    <Copy className="w-3 h-3"/>
-                    <span>{codeCopied == "ui" ? 'copied!' : 'copy'}</span>
-                </button>
-            </div>
-            <div className="h-[calc(100dvh-10rem)]">
-            <MonacoEditor
-              height="97%"
-              language="html"
-              theme="vs-dark"
-              onMount={handleEditorDidMount}
-              value={uiCode}
-              onChange={(value) => handleEditorChange(value, "ui")}
-              options={{
-                minimap: { enabled: false },
-                scrollBeyondLastLine: false,
-                fontSize: 14,
-                wordWrap: "on",
-                automaticLayout: true,
-              }}
-            />
-            </div>
-          </TabsContent>
+        <TabsContent value="skeleton" className="m-0">
+          <Editor
+            value={skeletonCode}
+            onChange={(val) => handleEditorChange(val, "skeleton")}
+            error={skeletonCodeConfig.errors?.[0]?.message}
+            onCopy={() => handleCopy(skeletonCode, "skeleton")}
+            copied={codeCopied === "skeleton"}
+          />
+        </TabsContent>
 
-          <TabsContent value="skeleton" className="m-0">
-              <div className="flex items-center px-2 pb-3 justify-between">
-                <div className="text-red-500  text-xs rounded-md py-1 px-2 font-semibold">
-                    { skeletonCodeConfig.errors?.[0]?.message }
-                </div>
-
-                <button
-                    onClick={() => handleCopy(skeletonCode,"ui")}
-                    className="ml-4 flex justify-center items-center space-x-1 bg-[#3e3e42] rounded-md py-1 px-2 text-white text-xs"
-                >
-                    <Copy className="w-3 h-3"/>
-                    <span>{codeCopied == "ui" ? 'copied!' : 'copy'}</span>
-                </button>
-            </div>
-            <div className="h-[calc(100dvh-10rem)]">
-                <MonacoEditor
-                height="97%"
-                language="html"
-                theme="vs-dark"
-                value={skeletonCode}
-                onChange={(value) => handleEditorChange(value, "skeleton")}
-                options={{
-                    minimap: { enabled: false },
-                    scrollBeyondLastLine: false,
-                    fontSize: 14,
-                    wordWrap: "on",
-                    automaticLayout: true,
-                }}
-                />
-            </div>
-          </TabsContent>
         </Tabs>
       </div>
     </div>

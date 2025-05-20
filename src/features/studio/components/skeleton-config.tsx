@@ -2,9 +2,8 @@
 
 import { Zap } from "lucide-react"
 import { AutocompleteInput } from "@/components/ui/autocomplete"
-import { useSkeletonStore } from "@/features/studio/stores"
-import { skeletonBorderRadiusSizes, skeletonColors, skeletonIntensities } from "../constants"
-import { SkeletonConfig } from "../types"
+import { useSkeletonStore } from "@/lib/store"
+import { SkeletonConfig, skeletonColors, skeletonIntensities, skeletonBorderRadiusSizes } from "../types"
 
 
 type ConfigInputType<K extends keyof SkeletonConfig = keyof SkeletonConfig> = {
@@ -13,14 +12,14 @@ type ConfigInputType<K extends keyof SkeletonConfig = keyof SkeletonConfig> = {
   suggestions: string[]
   placeholder: string
   showColorDot?: boolean
-  transform: (val: string) => SkeletonConfig[K] | undefined
+  transform: (val: string) => string | undefined
 }
 
 const configInputs: ConfigInputType[] = [
   {
     label: "Color",
     key: "color",
-    suggestions: skeletonColors,
+    suggestions: [...skeletonColors],
     placeholder: "Enter color",
     showColorDot: true,
     transform: (val) => val,
@@ -28,14 +27,14 @@ const configInputs: ConfigInputType[] = [
   {
     label: "Intensity",
     key: "intensity",
-    suggestions: skeletonIntensities,
+    suggestions: [...skeletonIntensities] as string[],
     placeholder: "Enter intensity",
-    transform: (val) => (/^\d*$/.test(val) ? Number(val) : undefined),
+    transform: (val) => (/^\d*$/.test(val) ? val : undefined),
   },
   {
     label: "Default Border Radius",
     key: "defaultBorderRadius",
-    suggestions: skeletonBorderRadiusSizes,
+    suggestions: [...skeletonBorderRadiusSizes],
     placeholder: "Enter border radius",
     transform: (val) => val,
   },

@@ -4,6 +4,9 @@ import { CodeFileTabConfig, SkeletonConfig } from "../types";
 import { DEFAULT_HTML_CODE, DEFAULT_SKELETON_CONFIG, DEFAULT_SKELETON_STYLE, DEFAULT_UI_CONFIG } from "../constants";
 
 
+//todo: need skeleton code and also preview code....
+//todo: it necessits a transition between them.....
+
 type SkeletonStore = {
   skeletonConfig: SkeletonConfig;
   uiCodeConfig: CodeFileTabConfig;
