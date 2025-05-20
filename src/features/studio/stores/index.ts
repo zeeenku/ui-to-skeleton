@@ -1,9 +1,10 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { CodeFileTabConfig } from "../types";
+import { CodeFileTabConfig, SkeletonConfig } from "../types";
 import {
   DEFAULT_HTML_CODE,
   DEFAULT_SKELETON_CONFIG,
+  DEFAULT_SKELETON_STYLE,
   DEFAULT_UI_CONFIG,
 } from "../constants";
 import { convertionController } from "../func/convertion";
@@ -16,6 +17,11 @@ const generateSkeleton = (htmlCode: string) => {
 };
 
 type SkeletonStore = {
+
+
+  skeletonConfig: SkeletonConfig;
+  setSkeletonConfig: (config: Partial<SkeletonConfig>) => void;
+
   uiCodeConfig: CodeFileTabConfig;
   setUiCodeConfig: (config: Partial<CodeFileTabConfig>) => void;
 
@@ -47,6 +53,14 @@ type SkeletonStore = {
 export const useSkeletonStore = create<SkeletonStore>()(
   persist(
     (set, get) => ({
+      skeletonConfig: DEFAULT_SKELETON_STYLE,
+      setSkeletonConfig: (config) =>
+        set((state) => ({
+          skeletonConfig: {
+            ...state.skeletonConfig,
+            ...config,
+          },
+        })),
       uiCodeConfig: DEFAULT_UI_CONFIG,
       skeletonCodeConfig: DEFAULT_SKELETON_CONFIG,
 
@@ -157,11 +171,18 @@ export const useSkeletonStore = create<SkeletonStore>()(
         set({
           uiCode: newUICode,
           uiSkeletonContraduction: false,
+          skeletonCodeUpdatedManually: false,
           hangingUICodeUpdates: "",
         });
 
         if (uiEditorRef) {
           uiEditorRef.setValue(newUICode);
+          // back if he wanted to add update again...
+          if( decision === "cancel"){
+             set({
+          skeletonCodeUpdatedManually: true,
+        });
+          }
         }
       },
     }),

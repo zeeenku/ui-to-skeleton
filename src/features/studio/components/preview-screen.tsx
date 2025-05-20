@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { useEffect, useMemo, useState } from "react";
 import { AllDevicesType, devices, stylesPreviewDependencies } from "../constants";
 import { useSkeletonStore } from "../stores";
+import { convertionController } from "../func/convertion";
 
 interface PreviewScreenProps {
   title: string;
@@ -25,10 +26,8 @@ export const PreviewScreen: React.FC<PreviewScreenProps> = ({
     skeletonCodeConfig,
   } = useSkeletonStore();
   
-  const headAdditions = useMemo(()=>{
-    if(type == "ui") return stylesPreviewDependencies[uiCodeConfig.styling];
-    if(type == "skeleton") return stylesPreviewDependencies[skeletonCodeConfig.styling];
-  }, [type])
+  const config = type == "ui" ? uiCodeConfig : skeletonCodeConfig;
+
   useEffect(() => {
     const calculateHeight = () => {
       const dvh = window.innerHeight;
@@ -47,11 +46,12 @@ export const PreviewScreen: React.FC<PreviewScreenProps> = ({
 
   const srcDoc = useMemo(() => {
     if (height === null) return '';
+
     return `
       <html>
         <head>
           <meta name="viewport" content="width=${currentDevice.size}, initial-scale=1.0">
-          ${headAdditions}
+          ${stylesPreviewDependencies[config.styling]}
           <style>
             body {
               margin: 0;
@@ -69,7 +69,7 @@ export const PreviewScreen: React.FC<PreviewScreenProps> = ({
           </style>
         </head>
         <body>
-          ${code}
+          ${ convertionController(code, config.format, "html" , config.styling, "tailwind" ) }
         </body>
       </html>
     `;

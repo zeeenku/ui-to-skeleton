@@ -39,7 +39,7 @@ return (
     <div>
       <div className="flex items-center px-2 pb-3 justify-between">
         <div className="text-red-500 text-xs font-semibold">
-          {errors[0].message}
+          {errors[0]?.message}
         </div>
 
         <button

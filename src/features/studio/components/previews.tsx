@@ -13,7 +13,6 @@ export function Previews(){
   const [activeTab, setActiveTab] =  useLocalStorage<string>("preview_ui_tab", "ui");
   const [previewDevice, setPreviewDevice] = useLocalStorage<AllDevicesType>("preview_device", devices[0].value);
 
-  //todo: make sure there is 2 skeleton code: 1 for export and 1 for preview....
   const {
     uiCode,
     skeletonCode,

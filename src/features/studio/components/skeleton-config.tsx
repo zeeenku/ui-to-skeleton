@@ -2,8 +2,8 @@
 
 import { Zap } from "lucide-react"
 import { AutocompleteInput } from "@/components/ui/autocomplete"
-import { useSkeletonStore } from "@/lib/store"
 import { SkeletonConfig, skeletonColors, skeletonIntensities, skeletonBorderRadiusSizes } from "../types"
+import { useSkeletonStore } from "../stores"
 
 
 type ConfigInputType<K extends keyof SkeletonConfig = keyof SkeletonConfig> = {
