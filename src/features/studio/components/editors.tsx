@@ -7,12 +7,15 @@ import { UpdateUITabAlert } from "./code-tab-update-alert"
 
 import { Editor } from "./editor";
 import { CodeConfigSelector } from "./code-config-selector";
+import { useSkeletonStore } from "../stores/index";
 
 
 export function Editors() {
 
-  const [activeCodeTab, setActiveCodeTab] = useState<"ui" |"skeleton">("ui");
-
+    const {
+        activeCodeTab,
+        setActiveCodeTab,
+      } = useSkeletonStore();
 
   return (
     <div className="flex flex-col">

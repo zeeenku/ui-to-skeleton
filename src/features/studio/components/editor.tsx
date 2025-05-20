@@ -22,6 +22,8 @@ export const Editor: React.FC<EditorProps> = ({
         setSkeletonCodeFromEditor,
         setUiCodeFromEditor,
         skeletonCodeConfig,
+        codeCopied,
+        copyCode
       } = useSkeletonStore();
 
   const onMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
@@ -30,8 +32,6 @@ export const Editor: React.FC<EditorProps> = ({
 
 const errors = type == "ui" ? uiCodeConfig.errors : skeletonCodeConfig.errors ;
 const value = type == "ui" ? uiCode : skeletonCode ;
-const onCopy = ()=>{};
-const codeCopied = false;
 const onChange =  (str: string | undefined) => 
     { type == "ui" ? setUiCodeFromEditor(str ?? "") : setSkeletonCodeFromEditor(str ?? "") };
 
@@ -43,11 +43,11 @@ return (
         </div>
 
         <button
-          onClick={onCopy}
+          onClick={()=>copyCode(type)}
           className="ml-4 flex justify-center items-center space-x-1 bg-[#3e3e42] rounded-md py-1 px-2 text-white text-xs"
         >
           <Copy className="w-3 h-3" />
-          <span>{codeCopied ? 'copied!' : 'copy'}</span>
+          <span>{codeCopied == type ? 'copied!' : 'copy'}</span>
         </button>
       </div>
 

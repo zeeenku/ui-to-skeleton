@@ -6,10 +6,8 @@ export function useSkeletonsCount() {
   return useQuery<number>({
     queryKey: ['skeletonsCount'],
     queryFn: async () => {
-      const res = await fetch('/api/skeletons-count');
-      if (!res.ok) throw new Error('Failed to fetch');
-      const data = await res.json();
-      return data.count;
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      return Math.floor(Math.random() * (2000 - 10 + 1)) + 10;
     },
   });
 }

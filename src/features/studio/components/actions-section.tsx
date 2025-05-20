@@ -26,8 +26,14 @@ export function ActionsSection({
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   //todo: needs to use react query....
     const { data: generatedSkeletonsCount, isLoading, isError } = useSkeletonsCount();
-
-    const copySkeletonCode = () => {}
+    const {
+        setActiveCodeTab,
+        copyCode,
+      } = useSkeletonStore();
+    const handleCopySkeletonCode = () => {
+      setActiveCodeTab("skeleton");
+      copyCode("skeleton");
+    }
 
   return (
     <div className="flex flex-wrap gap-2 items-center justify-between mb-4">
@@ -85,7 +91,7 @@ export function ActionsSection({
 
         <Button
           size="sm"
-          onClick={copySkeletonCode}
+          onClick={handleCopySkeletonCode}
           className="bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white shadow-md hover:shadow-lg transition-all duration-200"
         >
           <Copy className="h-4 w-4 mr-1" /> Copy Skeleton Code

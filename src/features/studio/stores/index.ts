@@ -10,6 +10,7 @@ import {
 import { convertionController } from "../func/convertion";
 import { validationController } from "../func/validation";
 import { editor } from "monaco-editor";
+import { toast } from "sonner";
 
 const generateSkeleton = (htmlCode: string) => {
   // Add your skeleton generation logic here
@@ -17,6 +18,13 @@ const generateSkeleton = (htmlCode: string) => {
 };
 
 type SkeletonStore = {
+
+  codeCopied: "ui" | "skeleton" | null;
+  copyCode: (type: "ui" | "skeleton") => void;
+
+
+  activeCodeTab: "ui" | "skeleton";
+  setActiveCodeTab: (tab: "ui" | "skeleton") => void;
 
 
   skeletonConfig: SkeletonConfig;
@@ -53,6 +61,28 @@ type SkeletonStore = {
 export const useSkeletonStore = create<SkeletonStore>()(
   persist(
     (set, get) => ({
+
+      codeCopied: null,
+
+    copyCode: (type) => {
+      const { uiCode, skeletonCode } = get();
+      const codeToCopy = type === "ui" ? uiCode : skeletonCode;
+
+      navigator.clipboard.writeText(codeToCopy).then(() => {
+        set({ codeCopied: type });
+        toast.success(`${type} code copied successfully!`)
+        setTimeout(() => {
+          set({ codeCopied: null });
+        }, 2000);
+      }).catch((err) => {
+        console.error("Failed to copy code:", err);
+      });
+    },
+
+    activeCodeTab: "ui",
+    setActiveCodeTab: (tab) => set({ activeCodeTab: tab }),
+
+
       skeletonConfig: DEFAULT_SKELETON_STYLE,
       setSkeletonConfig: (config) =>
         set((state) => ({
