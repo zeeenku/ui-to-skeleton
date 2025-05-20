@@ -11,11 +11,9 @@ import { convertionController } from "../func/convertion";
 import { validationController } from "../func/validation";
 import { editor } from "monaco-editor";
 import { toast } from "sonner";
+import { generateSkeleton } from "../func/generate";
 
-const generateSkeleton = (htmlCode: string) => {
-  // Add your skeleton generation logic here
-  return `<div class="skeleton">${htmlCode}</div>`; // Placeholder logic
-};
+
 
 type SkeletonStore = {
 
@@ -95,8 +93,13 @@ export const useSkeletonStore = create<SkeletonStore>()(
       skeletonCodeConfig: DEFAULT_SKELETON_CONFIG,
 
       uiCode: DEFAULT_HTML_CODE,
-      skeletonCode: generateSkeleton(DEFAULT_HTML_CODE),
-
+      skeletonCode: generateSkeleton(
+        DEFAULT_HTML_CODE,
+        DEFAULT_UI_CONFIG.format,        
+        DEFAULT_SKELETON_CONFIG.format, 
+        DEFAULT_UI_CONFIG.styling,     
+        DEFAULT_SKELETON_CONFIG.styling  
+      ),
       uiEditorRef: null,
       skeletonEditorRef: null,
 
@@ -163,7 +166,7 @@ export const useSkeletonStore = create<SkeletonStore>()(
       },
 
       setUiCodeFromEditor: async (code) => {
-        const { uiCodeConfig, skeletonCodeUpdatedManually } = get();
+        const { uiCodeConfig, skeletonCodeUpdatedManually, skeletonCodeConfig } = get();
         const errors = await validationController(code, uiCodeConfig.format);
 
         set((state) => ({
@@ -184,9 +187,16 @@ export const useSkeletonStore = create<SkeletonStore>()(
         }
 
         set({
-          uiCode: code,
-          skeletonCode: generateSkeleton(code),
-        });
+        uiCode: code,
+        skeletonCode: generateSkeleton(
+          code, 
+          uiCodeConfig.format,     
+          skeletonCodeConfig.format,  
+          uiCodeConfig.styling,     
+          skeletonCodeConfig.styling  
+        ),
+      });
+
       },
 
       setSkeletonCodeFromEditor: async (code) => {
