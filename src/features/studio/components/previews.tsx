@@ -69,6 +69,7 @@ export function Previews(){
                         <div className="flex items-center space-x-1 bg-slate-200/70 p-1 rounded-md">
                         {devices.map(el=>(
                             <DeviceSwitcherBtn
+                                key={el.value}
                                 previewDevice={el}
                                 setPreviewDevice={() => setPreviewDevice(el.value)} 
                                 activePreviewDeviceValue={previewDevice}                            

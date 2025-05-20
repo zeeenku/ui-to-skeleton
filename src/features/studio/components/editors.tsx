@@ -3,7 +3,7 @@ import { HTMLHint } from "htmlhint";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useSkeletonStore } from "@/lib/store"
+import { useSkeletonStore } from "@/features/studio/stores"
 import dynamic from "next/dynamic"
 import * as monaco from 'monaco-editor';
 import htmlValidator from 'html-validator';

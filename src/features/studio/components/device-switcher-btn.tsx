@@ -1,8 +1,8 @@
 import React from "react";
-import { Button } from "@/components/ui/button"; // Adjust path as needed
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"; // Adjust path
-import { cn } from "@/lib/utils"; // Utility for class names
-import type { DeviceType } from "../constants"; // Adjust path if needed
+import { Button } from "@/components/ui/button"; 
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import type { DeviceType } from "../constants"; 
 
 interface DeviceSwitcherProps {
   previewDevice: DeviceType;

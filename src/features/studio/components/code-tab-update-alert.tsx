@@ -1,4 +1,3 @@
-// components/UpdateUITabAlert.tsx
 'use client';
 
 import {

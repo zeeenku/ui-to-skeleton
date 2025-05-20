@@ -1,14 +1,8 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
+import { LayoutMode, SkeletonConfig } from "../types";
 
-// Add these to your existing store types
-type LayoutMode = "split" | "editor" | "preview"
 
-type SkeletonConfig = {
-  color: string;
-  intensity: number;
-  defaultBorderRadius: string;
-};
 
 type SkeletonStore = {
   // UI Format and Styling Options

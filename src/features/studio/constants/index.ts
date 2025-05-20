@@ -10,7 +10,9 @@ export const skeletonColors = [
 export const skeletonIntensities = ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"];
 export const skeletonBorderRadiusSizes = ["rounded-none", "rounded-sm", "rounded-md", "rounded-lg", "rounded-full"];
 
-
+export const getOpenIssueLInk = () => {
+  return "https://github.com/zeeenku/ui-to-skeleton/issues/new";
+}
 export type DeviceType = {
   name: string;
   value: string;
