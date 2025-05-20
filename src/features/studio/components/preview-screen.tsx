@@ -61,7 +61,7 @@ export const PreviewScreen: React.FC<PreviewScreenProps> = ({
               overflow-y: auto;
               width: 100%;
               border-radius: 16px;
-              background-color: gray;
+              background-color: oklch(96.8% 0.007 247.896);
               display: flex;
               justify-content: center;
               align-items: center;
