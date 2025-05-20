@@ -234,10 +234,18 @@ export const useSkeletonStore = create<SkeletonStore>()(
     }),
     {
       name: "skeleton-store",
-      partialize: (state) => ({
-        uiCodeConfig: state.uiCodeConfig,
-        skeletonCodeConfig: state.skeletonCodeConfig,
-      }),
+    partialize: (state) => ({
+  uiCodeConfig: state.uiCodeConfig,
+  skeletonCodeConfig: state.skeletonCodeConfig,
+  activeCodeTab: state.activeCodeTab,
+  skeletonConfig: state.skeletonConfig,
+  uiCode: state.uiCode,
+  skeletonCode: state.skeletonCode,
+  skeletonCodeUpdatedManually: state.skeletonCodeUpdatedManually,
+  hangingUICodeUpdates: state.hangingUICodeUpdates,
+  uiSkeletonContraduction: state.uiSkeletonContraduction,
+}),
+
     }
   )
 );
