@@ -1,21 +1,15 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import dynamic from "next/dynamic"
 import * as monaco from 'monaco-editor';
 
 import { useRef, useState } from "react"
 import { UpdateUITabAlert } from "./code-tab-update-alert"
-import { Copy } from "lucide-react";
 
 import { useSkeletonStore } from "../stores";
 import { validateFormat } from "../func/validation";
 import { Editor } from "./editor";
-import { uiCodeConfigFormats, uiCodeConfigStylings, skeletonCodeConfigFormats, skeletonCodeConfigStylings } from "../types";
 import { CodeConfigSelector } from "./code-config-selector";
-
-const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false })
 
 
 export function Editors() {
@@ -135,7 +129,6 @@ export function Editors() {
         <Tabs value={activeCodeTab} onValueChange={setActiveCodeTab} className="h-full bg-[#1e1e1e] border border-[#1e1e1e]">
           <div className="border-none p-3 border-b bg-[#2d2d30] text-sm text-white flex items-center justify-between">
             
-            
             <TabsList className="grid w-48 grid-cols-2 bg-[#3e3e42]">
               <TabsTrigger value="ui" className="text-white data-[state=active]:bg-[#1e1e1e]">
                 UI
@@ -145,15 +138,14 @@ export function Editors() {
               </TabsTrigger>
             </TabsList>
 
-            <div className="flex items-center space-x-2">
-                <CodeConfigSelector/>
-            </div>
+          <CodeConfigSelector type={"ui"}/>
 
+          </div>
         <TabsContent value="ui" className="m-0">
           <Editor
             value={uiCode}
             onChange={(val) => handleEditorChange(val, "ui")}
-            error={uiCodeConfig.errors?.[0]?.message}
+            errors={uiCodeConfig.errors}
             onCopy={() => handleCopy(uiCode, "ui")}
             copied={codeCopied === "ui"}
             onMount={handleEditorDidMount}
@@ -164,7 +156,7 @@ export function Editors() {
           <Editor
             value={skeletonCode}
             onChange={(val) => handleEditorChange(val, "skeleton")}
-            error={skeletonCodeConfig.errors?.[0]?.message}
+            errors={skeletonCodeConfig.errors}
             onCopy={() => handleCopy(skeletonCode, "skeleton")}
             copied={codeCopied === "skeleton"}
           />
