@@ -1,18 +1,51 @@
-"use client"
+'use client'
 
 import { Zap } from "lucide-react"
 import { AutocompleteInput } from "@/components/ui/autocomplete"
 import { useSkeletonStore } from "@/lib/store"
+import { skeletonBorderRadiusSizes, skeletonColors, skeletonIntensities } from "../constants"
+
+type SkeletonConfig = {
+  color: string
+  intensity: number
+  defaultBorderRadius: string
+}
+
+type ConfigInputType<K extends keyof SkeletonConfig = keyof SkeletonConfig> = {
+  label: string
+  key: K
+  suggestions: string[]
+  placeholder: string
+  showColorDot?: boolean
+  transform: (val: string) => SkeletonConfig[K] | undefined
+}
+
+const configInputs: ConfigInputType[] = [
+  {
+    label: "Color",
+    key: "color",
+    suggestions: skeletonColors,
+    placeholder: "Enter color",
+    showColorDot: true,
+    transform: (val) => val,
+  },
+  {
+    label: "Intensity",
+    key: "intensity",
+    suggestions: skeletonIntensities,
+    placeholder: "Enter intensity",
+    transform: (val) => (/^\d*$/.test(val) ? Number(val) : undefined),
+  },
+  {
+    label: "Default Border Radius",
+    key: "defaultBorderRadius",
+    suggestions: skeletonBorderRadiusSizes,
+    placeholder: "Enter border radius",
+    transform: (val) => val,
+  },
+]
 
 export default function SkeletonConfiguration() {
-  const colors = [
-    "slate", "gray", "zinc", "neutral", "stone", "red", "orange", "amber",
-    "yellow", "lime", "green", "emerald", "teal", "cyan", "sky", "blue",
-    "indigo", "violet", "purple", "fuchsia", "pink", "rose",
-  ]
-  const intensities = ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"]
-  const borderSizes = ["rounded-none", "rounded-sm", "rounded-md", "rounded-lg", "rounded-full"]
-
   const { skeletonConfig, setSkeletonConfig } = useSkeletonStore()
 
   return (
@@ -28,47 +61,28 @@ export default function SkeletonConfiguration() {
 
       <div className="px-4 py-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:max-w-5xl">
-          <AutocompleteInput
-            label="Color"
-            value={skeletonConfig.color}
-            onChange={(val) => {
-              setSkeletonConfig({ color: val })
-            }}
-            suggestions={colors}
-            onSelect={(val) => {
-              setSkeletonConfig({ color: val })
-            }}
-            placeholder="Enter color"
-            showColorDot
-          />
-
-          <AutocompleteInput
-            label="Intensity"
-            value={skeletonConfig.intensity.toString()}
-            onChange={(val) => {
-              if (/^\d*$/.test(val)) {
-                setSkeletonConfig({ intensity: Number(val) })
-              }
-            }}
-            suggestions={intensities}
-            onSelect={(val) => {
-              setSkeletonConfig({ intensity: Number(val) })
-            }}
-            placeholder="Enter intensity"
-          />
-
-          <AutocompleteInput
-            label="Default Border Radius"
-            value={skeletonConfig.defaultBorderRadius}
-            onChange={(val) => {
-              setSkeletonConfig({ defaultBorderRadius: val })
-            }}
-            suggestions={borderSizes}
-            onSelect={(val) => {
-              setSkeletonConfig({ defaultBorderRadius: val })
-            }}
-            placeholder="Enter border radius"
-          />
+          {configInputs.map(({ label, key, suggestions, placeholder, showColorDot, transform }) => (
+            <AutocompleteInput
+              key={key}
+              label={label}
+              value={skeletonConfig[key]?.toString() ?? ""}
+              onChange={(val) => {
+                const transformed = transform(val)
+                if (transformed !== undefined) {
+                  setSkeletonConfig({ [key]: transformed })
+                }
+              }}
+              onSelect={(val) => {
+                const transformed = transform(val)
+                if (transformed !== undefined) {
+                  setSkeletonConfig({ [key]: transformed })
+                }
+              }}
+              suggestions={suggestions}
+              placeholder={placeholder}
+              showColorDot={showColorDot}
+            />
+          ))}
         </div>
       </div>
     </div>

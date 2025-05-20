@@ -1,5 +1,16 @@
 import { Monitor, Smartphone, Tablet } from "lucide-react";
 
+
+export const skeletonColors = [
+    "slate", "gray", "zinc", "neutral", "stone", "red", "orange", "amber",
+    "yellow", "lime", "green", "emerald", "teal", "cyan", "sky", "blue",
+    "indigo", "violet", "purple", "fuchsia", "pink", "rose",
+];
+
+export const skeletonIntensities = ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"];
+export const skeletonBorderRadiusSizes = ["rounded-none", "rounded-sm", "rounded-md", "rounded-lg", "rounded-full"];
+
+
 export type DeviceType = {
   name: string;
   value: string;
