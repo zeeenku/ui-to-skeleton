@@ -25,7 +25,6 @@ export const SkeletonGeneratorHandler: React.FC<SkeletonGeneratorHandlerProps> =
 
   // Generate srcDoc
   const srcDoc = useMemo(() => {
-    console.log("ui code updated");
     return `
       <html>
         <head>
@@ -61,32 +60,40 @@ export const SkeletonGeneratorHandler: React.FC<SkeletonGeneratorHandlerProps> =
     setIframeRef(localRef);
   }, [setIframeRef]);
 
-  // Manually monitor when iframe content is ready
-  useEffect(() => {
+  // Handle iframe load event and generate skeleton
+  const handleIframeLoad = () => {
     const iframe = localRef.current;
     if (!iframe) return;
 
-    const checkIframeReady = () => {
-      const app = iframe.contentDocument?.body;
-      if (!app) return;
+    const app = iframe.contentDocument?.body;
+    if (!app) return;
 
-      console.log("Iframe content ready");
+    console.log("Iframe content loaded");
 
-      // Generate skeleton after a small delay
-      setTimeout(() => {
-        const skeleton = createSkeletonHTMLTagFromDOM(app);
-        const skeletonHTML = skeleton.render().outerHTML;
-        console.log("Generated skeleton HTML:", skeletonHTML);
-        setGeneratedSkeletonCode(skeletonHTML);
-      }, 500); // Small delay to ensure the iframe is fully rendered
+    // Generate skeleton HTML from the iframe content
+    const skeleton = createSkeletonHTMLTagFromDOM(app);
+    const skeletonHTML = skeleton.render().outerHTML;
+
+    console.log("Generated skeleton HTML:", skeletonHTML);
+
+    // Set generated skeleton code in Zustand
+    setGeneratedSkeletonCode(skeletonHTML);
+    setIframeLoaded(true); // Mark iframe as loaded
+  };
+
+  useEffect(() => {
+    // Listen for iframe load event
+    const iframe = localRef.current;
+    if (iframe) {
+      iframe.addEventListener("load", handleIframeLoad);
+    }
+
+    // Cleanup on component unmount or ref change
+    return () => {
+      if (iframe) {
+        iframe.removeEventListener("load", handleIframeLoad);
+      }
     };
-
-    // Initially check for iframe content
-    checkIframeReady();
-
-    // Monitor when content in the iframe changes (if needed)
-    const intervalId = setInterval(checkIframeReady, 1000); // Check every second
-    return () => clearInterval(intervalId); // Clean up interval when component unmounts or `srcDoc` changes
   }, [srcDoc, setGeneratedSkeletonCode]);
 
   useEffect(() => {
