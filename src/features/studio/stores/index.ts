@@ -19,7 +19,7 @@ type SkeletonStore = {
 
   iframeRef: RefObject<HTMLIFrameElement | null> | null;
   setIframeRef: (ref: RefObject<HTMLIFrameElement | null>) => void;
-
+  isSkeletonCodeGenerating: boolean;
   iframeLoaded: boolean;
   setIframeLoaded: (value: boolean) => void;
 
@@ -67,6 +67,7 @@ export const useSkeletonStore = create<SkeletonStore>()(
     (set, get) => ({
 
       iframeRef: null,
+      isSkeletonCodeGenerating: false,
       setIframeRef: (ref) => set({ iframeRef: ref }),
 
       iframeLoaded: false,
@@ -208,11 +209,16 @@ export const useSkeletonStore = create<SkeletonStore>()(
 
       setGeneratedSkeletonCode: async (code) => {
          set({
-          skeletonCode: code,
+          isSkeletonCodeGenerating: true
         });
+
+          const { skeletonEditorRef } = get();
+          if (skeletonEditorRef) {
+          skeletonEditorRef.setValue(code);
+        }
       },
       setSkeletonCodeFromEditor: async (code) => {
-        const { skeletonCodeConfig } = get();
+        const { skeletonCodeConfig, isSkeletonCodeGenerating } = get();
         const errors = await validationController(code, skeletonCodeConfig.format);
 
         set((state) => ({
@@ -224,10 +230,19 @@ export const useSkeletonStore = create<SkeletonStore>()(
 
         if (errors.length > 0) return;
 
+        if(isSkeletonCodeGenerating){
+        set({
+          skeletonCode: code,
+          isSkeletonCodeGenerating: false,
+        });
+        }
+        else{
         set({
           skeletonCode: code,
           skeletonCodeUpdatedManually: true,
         });
+        }
+
       },
 
       solveContraduction: async (decision) => {

@@ -19,12 +19,13 @@ export const SkeletonGeneratorHandler: React.FC<SkeletonGeneratorHandlerProps> =
 
   const setIframeRef = useSkeletonStore((s) => s.setIframeRef);
   const setIframeLoaded = useSkeletonStore((s) => s.setIframeLoaded);
-  const setGeneratedSkeletonCode = useSkeletonStore((s) => s.setGeneratedSkeletonCode); // Assuming you have a state setter for skeleton code
+  const setGeneratedSkeletonCode = useSkeletonStore((s) => s.setGeneratedSkeletonCode);
 
   const { uiCode, uiCodeConfig } = useSkeletonStore();
 
   // Generate srcDoc
   const srcDoc = useMemo(() => {
+    console.log("ui code updated");
     return `
       <html>
         <head>
@@ -60,30 +61,33 @@ export const SkeletonGeneratorHandler: React.FC<SkeletonGeneratorHandlerProps> =
     setIframeRef(localRef);
   }, [setIframeRef]);
 
-  // Listen for iframe load
+  // Manually monitor when iframe content is ready
   useEffect(() => {
     const iframe = localRef.current;
     if (!iframe) return;
 
-    const onLoad = () => {
-      setIframeLoaded(true);
-
+    const checkIframeReady = () => {
       const app = iframe.contentDocument?.body;
       if (!app) return;
 
+      console.log("Iframe content ready");
+
+      // Generate skeleton after a small delay
       setTimeout(() => {
         const skeleton = createSkeletonHTMLTagFromDOM(app);
         const skeletonHTML = skeleton.render().outerHTML;
-        console.log(skeletonHTML)
+        console.log("Generated skeleton HTML:", skeletonHTML);
         setGeneratedSkeletonCode(skeletonHTML);
-      }, 500);
+      }, 500); // Small delay to ensure the iframe is fully rendered
     };
 
-    iframe.addEventListener("load", onLoad);
-    return () => {
-      iframe.removeEventListener("load", onLoad);
-    };
-  }, [srcDoc, setIframeLoaded, setGeneratedSkeletonCode]);
+    // Initially check for iframe content
+    checkIframeReady();
+
+    // Monitor when content in the iframe changes (if needed)
+    const intervalId = setInterval(checkIframeReady, 1000); // Check every second
+    return () => clearInterval(intervalId); // Clean up interval when component unmounts or `srcDoc` changes
+  }, [srcDoc, setGeneratedSkeletonCode]);
 
   useEffect(() => {
     setIframeLoaded(false);
@@ -94,7 +98,7 @@ export const SkeletonGeneratorHandler: React.FC<SkeletonGeneratorHandlerProps> =
       ref={localRef}
       srcDoc={srcDoc}
       title={title}
-      className={`fixed h-screen w-screen border-0 ${className}`}
+      className={`fixed left-full h-screen w-screen border-0 ${className}`}
     />
   );
 };
