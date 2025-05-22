@@ -11,11 +11,17 @@ import { convertionController } from "../func/convertion";
 import { validationController } from "../func/validation";
 import { editor } from "monaco-editor";
 import { toast } from "sonner";
-import { generateSkeleton } from "../func/generate";
+import { RefObject } from "react";
 
 
 
 type SkeletonStore = {
+
+  iframeRef: RefObject<HTMLIFrameElement | null> | null;
+  setIframeRef: (ref: RefObject<HTMLIFrameElement | null>) => void;
+
+  iframeLoaded: boolean;
+  setIframeLoaded: (value: boolean) => void;
 
   codeCopied: "ui" | "skeleton" | null;
   copyCode: (type: "ui" | "skeleton") => void;
@@ -39,7 +45,7 @@ type SkeletonStore = {
 
   skeletonCode: string;
   setSkeletonCodeFromEditor: (code: string) => Promise<void>;
-
+  setGeneratedSkeletonCode: (code: string) => Promise<void>;
   uiEditorRef: editor.IStandaloneCodeEditor | null;
   skeletonEditorRef: editor.IStandaloneCodeEditor | null;
   setUIEditorRef: (editor: editor.IStandaloneCodeEditor) => void;
@@ -59,6 +65,12 @@ type SkeletonStore = {
 export const useSkeletonStore = create<SkeletonStore>()(
   persist(
     (set, get) => ({
+
+      iframeRef: null,
+      setIframeRef: (ref) => set({ iframeRef: ref }),
+
+      iframeLoaded: false,
+      setIframeLoaded: (value) => set({ iframeLoaded: value }),
 
       codeCopied: null,
 
@@ -93,13 +105,7 @@ export const useSkeletonStore = create<SkeletonStore>()(
       skeletonCodeConfig: DEFAULT_SKELETON_CONFIG,
 
       uiCode: DEFAULT_HTML_CODE,
-      skeletonCode: generateSkeleton(
-        DEFAULT_HTML_CODE,
-        DEFAULT_UI_CONFIG.format,        
-        DEFAULT_SKELETON_CONFIG.format, 
-        DEFAULT_UI_CONFIG.styling,     
-        DEFAULT_SKELETON_CONFIG.styling  
-      ),
+      skeletonCode: DEFAULT_HTML_CODE,//todo: add default skeleton code
       uiEditorRef: null,
       skeletonEditorRef: null,
 
@@ -188,17 +194,23 @@ export const useSkeletonStore = create<SkeletonStore>()(
 
         set({
         uiCode: code,
-        skeletonCode: generateSkeleton(
-          code, 
-          uiCodeConfig.format,     
-          skeletonCodeConfig.format,  
-          uiCodeConfig.styling,     
-          skeletonCodeConfig.styling  
-        ),
+        // skeletonCode: generateSkeleton(
+        //   code, 
+        //   uiCodeConfig.format,     
+        //   skeletonCodeConfig.format,  
+        //   uiCodeConfig.styling,     
+        //   skeletonCodeConfig.styling  
+        // ),
       });
 
       },
 
+
+      setGeneratedSkeletonCode: async (code) => {
+         set({
+          skeletonCode: code,
+        });
+      },
       setSkeletonCodeFromEditor: async (code) => {
         const { skeletonCodeConfig } = get();
         const errors = await validationController(code, skeletonCodeConfig.format);
