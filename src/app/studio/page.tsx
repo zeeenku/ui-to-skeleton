@@ -21,7 +21,7 @@ export default function CodeEditor() {
 
   return (
     <QueryClientProvider client={queryClient}>
-    <div className="flex flex-col h-full bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
+    <div className="flex w-screen flex-col h-full bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
       <Header/>
       <SkeletonGeneratorHandler/>
       <div className="container mx-auto px-4 py-6">
