@@ -80,8 +80,10 @@ export const PreviewScreen: React.FC<PreviewScreenProps> = ({
       <div
         className={cn(
           'transform transition-all h-full duration-300 px-2',
-          `max-w-[${currentDevice.size}px] w-full`
+          `w-full`
         )}
+          style={{ maxWidth: `${currentDevice.size}px` }}
+
       >
         {height !== null && (
           <iframe
