@@ -1,0 +1,10 @@
+name: "❓ Ask a Question"
+description: "Need help or unsure how something works?"
+title: "[Question] - "
+labels: [question]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      required: true

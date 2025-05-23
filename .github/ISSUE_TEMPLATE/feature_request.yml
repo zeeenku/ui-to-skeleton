@@ -1,0 +1,16 @@
+name: "✨ Feature Request"
+description: "Suggest an idea to improve the tool"
+title: "[Feature] - "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: feature
+    attributes:
+      label: What feature would you like?
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: What problem does it solve?
+      description: Describe the benefit or context of the feature.

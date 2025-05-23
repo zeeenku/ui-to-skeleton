@@ -1,10 +1,21 @@
 blank_issues_enabled: false
 
-contact_links:
-  - name: 💬 Ask a question in Discussions
-    url: https://github.com/zeenkuE/ui-to-skeleton/discussions
-    about: For general questions, help, or brainstorming ideas, please use Discussions.
+# No contact_links section here, so GitHub shows the 4 templates in the UI
 
-  - name: 📚 View documentation
-    url: https://your-tool-docs.example.com
-    about: Learn how to use UI to Skeleton, with examples and guides.
+# Order and display names of templates
+issue_templates:
+  - name: "🐞 Bug in the App"
+    description: "Something in the app UI isn't working right"
+    file: bug_report.yml
+
+  - name: "⚠️ Incorrect Skeleton Generation"
+    description: "The generated code from UI input is wrong"
+    file: bad_generation.yml
+
+  - name: "✨ Feature Request"
+    description: "Propose a new feature or enhancement"
+    file: feature_request.yml
+
+  - name: "❓ Ask a Question"
+    description: "Need help or clarification?"
+    file: question.yml

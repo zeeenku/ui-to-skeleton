@@ -1,0 +1,30 @@
+name: "⚠️ Incorrect Skeleton Generation"
+description: "Generated skeleton doesn't match the UI input"
+title: "[Skeleton Bug] - "
+labels: [bug, skeleton]
+body:
+  - type: textarea
+    id: ui-code
+    attributes:
+      label: Input UI Code
+      required: true
+      render: shell
+
+  - type: textarea
+    id: skeleton-output
+    attributes:
+      label: Output Skeleton Code
+      required: true
+      render: shell
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Output
+      required: false
+
+  - type: textarea
+    id: explanation
+    attributes:
+      label: What's wrong with the output?
+      required: true
