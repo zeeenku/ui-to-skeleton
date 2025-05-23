@@ -1,36 +1,62 @@
-name: "🐞 Bug in the App"
-description: "Something isn't working in the UI to Skeleton tool."
-title: "[Bug] - "
-labels: [bug]
+name: Report a bug
+description: Something is not working? Report a bug
+title: "[Bug]: "
+labels: [":bug: bug", ":eyes: triage"]
 body:
+
   - type: textarea
-    id: what-happened
+    id: context
     attributes:
-      label: What went wrong?
-      description: Describe the problem as clearly as possible.
+      label: Context
+      description: >-
+        This field is optional. You may provide additional context for the bug
+        you want to report, helping us to understand what you are working on and
+        what you are trying to achieve. If the context is not relevant, you can
+        leave this field empty.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug description
+      description: >-
+        Explain where the UI to Skeleton tool does not behave as you would expect it to.
+        Be as specific as possible. If you found a workaround or fix, please let us (and others) know.
+    validations:
       required: true
 
   - type: textarea
-    id: steps
+    id: reproduction
     attributes:
-      label: Steps to Reproduce
-      placeholder: |
-        1. Open the tool
-        2. Click on...
-        3. See error
-      required: true
-
-  - type: input
-    id: version
-    attributes:
-      label: Tool Version (or link)
-      placeholder: "v1.2.3 or https://your-tool-url.com"
+      label: Reproduction
+      description: >-
+        Please create a __.zip file__ with a __minimal reproduction__ or include the exact input/output that reproduces the bug.
+      placeholder: |-
+        Drag and drop the .zip file with minimal reproduction here or paste UI code/skeleton output.
 
   - type: textarea
-    id: environment
+    id: steps-to-reproduce
     attributes:
-      label: Environment
-      placeholder: |
-        - OS: Windows 10 / macOS 14
-        - Browser: Chrome 124
-        - Node.js: 20.x (if used)
+      label: Steps to reproduce
+      description: >-
+        Provide a detailed list of instructions, guiding us through the steps to recreate the issue.
+        Be as specific as possible.
+      placeholder: |-
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment & Versions
+      description: >-
+        Please include relevant version information:
+      placeholder: |-
+        UI to Skeleton version: ...
+        Node.js version (if used): ...
+        Browser & version: ...
+        Operating system: ...
+    validations:
+      required: true
