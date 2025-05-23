@@ -213,6 +213,7 @@ export const useSkeletonStore = create<SkeletonStore>()(
         });
 
           const { skeletonEditorRef } = get();
+          console.log("skeleton ref: "+skeletonEditorRef)
           if (skeletonEditorRef) {
           skeletonEditorRef.setValue(code);
         }
@@ -242,7 +243,7 @@ export const useSkeletonStore = create<SkeletonStore>()(
           skeletonCodeUpdatedManually: true,
         });
         }
-
+        console.log("skeleton code: "+get().skeletonCode)
       },
 
       solveContraduction: async (decision) => {

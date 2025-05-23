@@ -21,7 +21,7 @@ export const SkeletonGeneratorHandler: React.FC<SkeletonGeneratorHandlerProps> =
   const setIframeLoaded = useSkeletonStore((s) => s.setIframeLoaded);
   const setGeneratedSkeletonCode = useSkeletonStore((s) => s.setGeneratedSkeletonCode);
 
-  const { uiCode, uiCodeConfig } = useSkeletonStore();
+  const { uiCode, uiCodeConfig, skeletonConfig } = useSkeletonStore();
 
   // Generate srcDoc
   const srcDoc = useMemo(() => {
@@ -72,7 +72,7 @@ export const SkeletonGeneratorHandler: React.FC<SkeletonGeneratorHandlerProps> =
 
     // Generate skeleton HTML from the iframe content
     const skeleton = createSkeletonHTMLTagFromDOM(app);
-    const skeletonHTML = skeleton.render().outerHTML;
+    const skeletonHTML = skeleton.render( `bg-${skeletonConfig.color}-${skeletonConfig.intensity}`,skeletonConfig.defaultBorderRadius).outerHTML;
 
     console.log("Generated skeleton HTML:", skeletonHTML);
 

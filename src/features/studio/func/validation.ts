@@ -34,7 +34,7 @@ HTMLHint.addRule(noScriptTagRule);
 export const validateHtmlFormat = async (html: string) => {
   const rules = {
     "tagname-lowercase": true,
-    "attr-value-double-quotes": true,
+    "attr-value-double-quotes": false,
     "doctype-first": false,
     "tag-pair": true,
     "spec-char-escape": false,

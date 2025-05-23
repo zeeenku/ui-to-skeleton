@@ -133,7 +133,6 @@
 // has a text children, then make an element for it
 // block and father flex, not working....
 
-const defaultBorderRadius = "rounded-md";
 function isBgClass(className: string) { 
     const regex = /^(.*:)?bg-\S+$/;
     return regex.test(className);
@@ -192,7 +191,7 @@ export class HTMLTag {
     }
 
     // Method to render the element and its children
-    render() {
+    render( bgClass: string, defaultBorderRadiusClass: string) {
 
         const element = document.createElement("div");
         // get display class (if not exist)
@@ -242,12 +241,12 @@ export class HTMLTag {
                     line.classList.add(heightClass);
                     line.classList.add(marginClass);
                     line.classList.add("animate-pulse");
-                    line.classList.add("border");
-                    line.classList.add("bg-slate-300");
+                    // line.classList.add("border");
+                    line.classList.add(bgClass);
                 
                     // Conditional class for border radius
                     if (this.borderRadius === "0px") {
-                        line.classList.add(defaultBorderRadius); // Make sure defaultBorderRadius is defined
+                        line.classList.add(defaultBorderRadiusClass); // Make sure defaultBorderRadiusClass is defined
                     }
                 
                     // Append the line to the element
@@ -303,9 +302,12 @@ export class HTMLTag {
             if (!hasHeightClass) classList.push(`h-[${this.height}px]`);
 
             // Add the animation and background classes
-            classList.push("animate-pulse", "border" , "bg-slate-300");
+
+            classList.push("animate-pulse", 
+                //"border" ,
+                bgClass);
             if(this.borderRadius == "0px"){
-                classList.push(defaultBorderRadius);
+                classList.push(defaultBorderRadiusClass);
             }
             // Add all the classes to the element
             classList.forEach(el => element.classList.add(el));
@@ -314,7 +316,7 @@ export class HTMLTag {
         // Render children (if any)
         this.children.forEach(child => {
             if (child instanceof HTMLTag && this.tagName !== "svg") {
-                element.appendChild(child.render());
+                element.appendChild(child.render(bgClass, defaultBorderRadiusClass));
             } else {
                 // const ell = document.createElement("span");
                 // // ell.innerHTML = child;

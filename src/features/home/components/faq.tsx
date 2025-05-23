@@ -17,16 +17,14 @@ export function FAQ() {
     }
   }, [isInView, controls])
 
-
-
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2, // Time between each child animation
-        delayChildren: 0.3, // Initial delay before starting children animations
+        staggerChildren: 0.01, // Time between each child animation
+        delayChildren: 0, // Initial delay before starting children animations
       },
     },
   }
