@@ -4,6 +4,14 @@ title: "[Skeleton Gen Bug] - "
 labels: [bug, skeleton]
 body:
   - type: textarea
+    id: explanation
+    attributes:
+      label: What’s wrong with the output?
+      description: "Explain in detail what the problem is with the generated skeleton."
+    validations:
+      required: true
+
+  - type: textarea
     id: ui-code
     attributes:
       label: Input UI Code
@@ -26,11 +34,3 @@ body:
       description: "If possible, paste the correct or expected skeleton code here."
     validations:
       required: false
-
-  - type: textarea
-    id: explanation
-    attributes:
-      label: What’s wrong with the output?
-      description: "Explain in detail what the problem is with the generated skeleton."
-    validations:
-      required: true

@@ -1,8 +1,45 @@
 import { Monitor, Smartphone, Tablet } from "lucide-react";
 import { CodeFileTabConfig, SkeletonCodeConfigStylings, SkeletonConfig, UiCodeConfigStylings } from "../types";
 
-export const getOpenIssueLInk = () => {
-return "https://github.com/zeeenku/ui-to-skeleton/issues/new?template=01-bad_generation.yml&title=[Skeleton%20Bug]%20-%20Skeleton%20does%20not%20match%20UI";
+export const getOpenIssueLInk = (
+    // { uiCode, skeletonCode, expectedOutput, explanation }
+  ) => {
+  const uiCode = `<div><h1>Hello</h1></div>`;
+  const skeletonCode = `<h1>Hello</h1>;`;
+  const expectedOutput = `<div><h1>Hello</h1></div>;`;
+  const explanation = "The outer <div> was stripped in the generated skeleton.";
+  const isSkeletonUpdated = false;
+
+  const baseUrl = "https://github.com/zeeenku/ui-to-skeleton/issues/new";
+  const title = encodeURIComponent("[Skeleton Bug] - Generated skeleton is wrong");
+
+  const bodyMarkdown = `### What’s wrong with the output?
+
+${explanation || "Explain what doesn't match or behave as expected."}
+
+### Input UI Code
+
+\`${uiCode || "<paste UI code here>"}\`
+
+### Output Skeleton Code
+
+\`${skeletonCode || "<paste generated skeleton here>"}\`
+
+### Expected Output (optional)
+
+${expectedOutput ? `\`${expectedOutput}\`` : "N/A"}
+${isSkeletonUpdated ? "\n\n_Note: the skeleton code provided is updated after generation._" : ""}
+
+`;
+
+
+
+  const body = encodeURIComponent(bodyMarkdown);
+
+  return `${baseUrl}?template=simullate-skeleton-bad-gen.yml&title=${title}&body=${body}`;
+
+
+// return "https://github.com/zeeenku/ui-to-skeleton/issues/new?template=01-bad_generation.yml&title=[Skeleton%20Bug]%20-%20Skeleton%20does%20not%20match%20UI";
   // return "https://github.com/zeeenku/ui-to-skeleton/issues/new";
 }
 export type DeviceType = {
