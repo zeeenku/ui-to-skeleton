@@ -1,5 +1,5 @@
 name: "✨ Feature Request"
-description: "Suggest an idea to improve the tool"
+description: "Suggest an idea to improve the UI to Skeleton tool"
 title: "[Feature] - "
 labels: [enhancement]
 body:
@@ -7,6 +7,7 @@ body:
     id: feature
     attributes:
       label: What feature would you like?
+    validations:
       required: true
 
   - type: textarea
@@ -14,3 +15,14 @@ body:
     attributes:
       label: What problem does it solve?
       description: Describe the benefit or context of the feature.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-structure
+    attributes:
+      label: Proposed project structure or output format (optional)
+      description: Suggest how the skeleton generation or project structure should change or improve.
+    validations:
+      required: false
+
