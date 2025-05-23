@@ -5,58 +5,54 @@ labels: [":bug: bug", ":eyes: triage"]
 body:
 
   - type: textarea
-    id: context
-    attributes:
-      label: Context
-      description: >-
-        This field is optional. You may provide additional context for the bug
-        you want to report, helping us to understand what you are working on and
-        what you are trying to achieve. If the context is not relevant, you can
-        leave this field empty.
-
-  - type: textarea
     id: description
     attributes:
       label: Bug description
       description: >-
-        Explain where the UI to Skeleton tool does not behave as you would expect it to.
-        Be as specific as possible. If you found a workaround or fix, please let us (and others) know.
+        Explain where the UI to Skeleton tool does not behave as expected.
+        Be as specific as possible.
     validations:
       required: true
 
   - type: textarea
-    id: reproduction
-    attributes:
-      label: Reproduction
-      description: >-
-        Please create a __.zip file__ with a __minimal reproduction__ or include the exact input/output that reproduces the bug.
-      placeholder: |-
-        Drag and drop the .zip file with minimal reproduction here or paste UI code/skeleton output.
-
-  - type: textarea
-    id: steps-to-reproduce
+    id: steps
     attributes:
       label: Steps to reproduce
       description: >-
-        Provide a detailed list of instructions, guiding us through the steps to recreate the issue.
-        Be as specific as possible.
+        Tell us exactly how to reproduce the issue.
       placeholder: |-
-        1. ...
-        2. ...
-        3. ...
+        1. Go to the tool
+        2. Paste this UI code: [...]
+        3. Click "Generate"
+        4. Observe the issue
     validations:
       required: true
+
+  - type: textarea
+    id: ui-code
+    attributes:
+      label: UI Code (if relevant)
+      description: >-
+        Paste the exact UI code that triggered the issue, if applicable.
+      render: shell
+
+  - type: textarea
+    id: skeleton-output
+    attributes:
+      label: Generated Skeleton (optional)
+      description: >-
+        If the tool generated incorrect output, paste it here.
+      render: shell
 
   - type: textarea
     id: env
     attributes:
-      label: Environment & Versions
+      label: Environment
       description: >-
-        Please include relevant version information:
+        Include your browser, OS, and tool version (if applicable).
       placeholder: |-
-        UI to Skeleton version: ...
-        Node.js version (if used): ...
-        Browser & version: ...
-        Operating system: ...
+        Browser: Chrome 124  
+        OS: Windows 11  
+        Tool version: latest (web)
     validations:
       required: true
