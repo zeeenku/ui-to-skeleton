@@ -17,16 +17,21 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '18'
-        cache: 'npm'    # Cache npm instead of pnpm
+        cache: 'pnpm'    
+
+    - name: Install pnpm globally
+      run: |
+        npm install -g pnpm
+        echo "$(npm bin -g)" >> $GITHUB_PATH
 
     - name: Install dependencies
-      run: npm install
+      run: pnpm install
 
     - name: Type Check
-      run: npm run tsc --noEmit
+      run: pnpm tsc --noEmit
 
     - name: Run Tests
-      run: npm test
+      run: pnpm test
 
     - name: Deploy to VPS via SSH
       uses: appleboy/ssh-action@v1.0.3
