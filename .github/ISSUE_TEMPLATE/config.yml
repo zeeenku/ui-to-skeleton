@@ -1,0 +1,10 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: 💬 Ask a question in Discussions
+    url: https://github.com/zeenkuE/ui-to-skeleton/discussions
+    about: For general questions, help, or brainstorming ideas, please use Discussions.
+
+  - name: 📚 View documentation
+    url: https://your-tool-docs.example.com
+    about: Learn how to use UI to Skeleton, with examples and guides.
