@@ -142,11 +142,10 @@ export default function Home() {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
                     size="lg"
-                    onClick={() => setShowEditor(true)}
                     className="bg-white text-cyan-700 hover:bg-cyan-50"
                     asChild
                   >
-                    <Link href="#">
+                    <Link href="/studio">
                       Get Your Skeleton 
                     </Link>
                   </Button>
