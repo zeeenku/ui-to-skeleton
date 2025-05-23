@@ -1,5 +1,5 @@
 name: "❓ Ask a Question"
-description: "Need help or unsure how something works?"
+description: "Need help or unsure how something works? Ask here!"
 title: "[Question] - "
 labels: [question]
 body:
@@ -7,4 +7,16 @@ body:
     id: question
     attributes:
       label: Your Question
+      description: |
+        Please describe your question clearly. Include any relevant details or examples that can help us understand and answer you better.
+    validations:
       required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context (optional)
+      description: |
+        Provide any additional context or background information that might be helpful.
+    validations:
+      required: false
