@@ -8,38 +8,43 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        cache: 'pnpm'
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 10
+          run_install: false
 
-    - name: Install dependencies
-      run: pnpm install
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
 
-    - name: Type Check
-      run: pnpm tsc --noEmit
+      - name: Install dependencies
+        run: pnpm install
 
-    - name: Run Tests
-      run: pnpm test
+      - name: Type Check
+        run: pnpm tsc --noEmit
 
-    - name: Deploy to VPS via SSH
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.VPS_HOST }}
-        username: ${{ secrets.VPS_USER }}
-        key: ${{ secrets.VPS_PRIVATE_KEY }}
-        script: |
-          cd ${{ secrets.VPS_PROJECT_PATH }}
-          git pull origin production
-          rm -rf .next node_modules
-          pnpm install
-          pnpm build
-          pm2 delete ui-to-skeleton || true
-          pm2 start pnpm --name ui-to-skeleton -- start -p 3050
-          pm2 save
+      - name: Run Tests
+        run: pnpm test
+
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_PRIVATE_KEY }}
+          script: |
+            cd ${{ secrets.VPS_PROJECT_PATH }}
+            git pull origin production
+            rm -rf .next node_modules
+            pnpm install
+            pnpm build
+            pm2 delete ui-to-skeleton || true
+            pm2 start pnpm --name ui-to-skeleton -- start -p 3050
+            pm2 save
