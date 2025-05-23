@@ -21,6 +21,7 @@ import { Comparaison } from "@/components/comparaison"
 import { Features } from "@/components/features"
 import { Footer } from "@/features/home/components/footer"
 import { AccordionItem } from "@/components/faq-accordion"
+import { CTA } from "@/features/home/components/cta"
 
 export default function Home() {
   const [showEditor, setShowEditor] = useState(false)
@@ -132,7 +133,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* CTA Section */}
+            {/* CTA Section
             <div className="container px-4">
               <div className="bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-2xl p-8 md:p-12 shadow-xl max-w-5xl mx-auto text-center text-white">
                 <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to transform your loading experience?</h2>
@@ -154,8 +155,10 @@ export default function Home() {
                   </Button>
                 </div>
               </div>
-            </div>
+            </div> */}
 
+
+              <CTA/>
             {/* <Alert className="max-w-lg bg-cyan-50 border-cyan-200 text-cyan-800">
               <AlertDescription>
                 This is the first version of UI to Skeleton. More features will be added in future updates.
