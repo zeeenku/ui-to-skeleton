@@ -1,4 +1,4 @@
-import { Button } from "./ui/button";
+import { Button } from "../../../components/ui/button";
 import Link from "next/link"
 import Image from "next/image" 
 export function Footer(){
@@ -76,6 +76,11 @@ export function Footer(){
                     Skeleton Studio
                   </Link>
                 </li>
+                 <li>
+                  <Link href="/" className="text-slate-500 hover:text-cyan-600 transition-colors">
+                    Home
+                  </Link>
+                </li>
                 <li>
                   <Link href="/#features" className="text-slate-500 hover:text-cyan-600 transition-colors">
                     Features
@@ -93,11 +98,6 @@ export function Footer(){
               <h3 className="font-semibold text-slate-800 mb-4">Resources</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/#demo" className="text-slate-500 hover:text-cyan-600 transition-colors">
-                    Live Demo
-                  </Link>
-                </li>
-                <li>
                   <Link href="https://github.com/zeeenku/ui-to-skeleton/issues/new" className="text-slate-500 hover:text-cyan-600 transition-colors">
                     Report an Issue
                   </Link>
@@ -105,6 +105,16 @@ export function Footer(){
                 <li>
                   <Link href="#" className="text-slate-500 hover:text-cyan-600 transition-colors">
                     Support
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/privacy-policy" className="text-slate-500 hover:text-cyan-600 transition-colors">
+                    Privacy policy
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/terms-of-use" className="text-slate-500 hover:text-cyan-600 transition-colors">
+                    Terms of use
                   </Link>
                 </li>
               </ul>
@@ -115,7 +125,7 @@ export function Footer(){
             <div className="flex items-center gap-4 sm:gap-2 sm:text-center">
                 <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-cyan-200">
                     <Image
-                    src="/developer.png"
+                    src="/dev/small.jpg"
                     alt="Developer"
                     width={48}
                     height={48}
@@ -124,8 +134,7 @@ export function Footer(){
                 </div>
                 <div className="sm:text-start">
                     <p className="font-medium text-slate-800 text-sm sm:text-base">
-                    made by Zakariaa Enajjachi 
-                    <Link className="underline" href="https://dev.zeenku.com">@zeenku</Link>
+                    made <Link className="underline" href="https://dev.zeenku.com">@zeenku</Link>  by Zakariaa Enajjachi 
                     </p>
                     <p className="text-xs text-slate-500 sm:text-sm">Fullstack Developer</p>
                 </div>

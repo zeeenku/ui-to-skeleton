@@ -19,7 +19,7 @@ import { Hero } from "@/components/hero"
 import { Demo } from "@/components/demo"
 import { Comparaison } from "@/components/comparaison"
 import { Features } from "@/components/features"
-import { Footer } from "@/components/footer"
+import { Footer } from "@/features/home/components/footer"
 import { AccordionItem } from "@/components/faq-accordion"
 
 export default function Home() {
