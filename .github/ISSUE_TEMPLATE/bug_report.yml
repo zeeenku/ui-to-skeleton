@@ -1,0 +1,44 @@
+name: "🐛 Report a Bug"
+description: "Something isn't working as expected"
+title: "[Bug] - "
+labels: [bug]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the unexpected behavior.
+      placeholder: "When I tried to generate skeleton code, I got an error..."
+      required: true
+
+  - type: textarea
+    id: ui-code
+    attributes:
+      label: Submitted UI Code
+      description: Paste the UI code that was used when the bug happened.
+      placeholder: "<UI code here>"
+      render: shell
+
+  - type: textarea
+    id: skeleton-config
+    attributes:
+      label: Skeleton Configuration / Output
+      description: Share any config or generated skeleton that helps reproduce the bug.
+      render: shell
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      placeholder: |
+        1. Go to the tool
+        2. Paste UI code
+        3. Click 'Generate'
+        4. See error
+      required: true
+
+  - type: input
+    id: tool-version
+    attributes:
+      label: Tool Version
+      placeholder: "v1.2.3 or web URL (if hosted)"
