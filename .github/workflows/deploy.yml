@@ -38,7 +38,7 @@ jobs:
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_PRIVATE_KEY }}
+          key: ${{ secrets.VPS_PRIVATE_AUTH_KEY }}
           script: |
             cd ${{ secrets.VPS_PROJECT_PATH }}
             git pull origin production
