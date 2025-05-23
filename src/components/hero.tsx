@@ -135,8 +135,10 @@ export function Hero() {
             The Magic Behind It
           </div>
           <div className="flex flex-col md:flex-row items-center justify-center gap-4 py-2">
-            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-cyan-500 text-white">
-              <Zap className="h-6 w-6" />
+               <div>
+                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-cyan-500 text-white">
+                  <Zap className="h-6 w-6" />
+              </div>
             </div>
             <p className="text-cyan-900 dark:text-cyan-100 text-center md:text-left">
               <span className="font-semibold">Feels like AI magic</span>, but it&apos;s just{" "}
