@@ -39,4 +39,4 @@ body:
         OS: Windows 11  
         Tool version: latest (web)
     validations:
-      required: true
+      required: false
