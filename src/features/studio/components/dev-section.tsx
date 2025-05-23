@@ -1,5 +1,5 @@
 "use client"
-
+import Image from "next/image";
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Github, Twitter, Linkedin, ExternalLink } from "lucide-react"
@@ -38,7 +38,8 @@ export default function DeveloperBio() {
             >
               <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full blur opacity-0 group-hover:opacity-60 transition-opacity duration-500"></div>
-                <img
+                <Image
+                width={128} height={128}
                   src="/placeholder.svg?height=180&width=180"
                   alt="Developer Profile"
                   className="w-28 h-28 md:w-32 md:h-32 rounded-full object-cover border-2 border-white/80 dark:border-slate-700/50 shadow-md relative z-10"

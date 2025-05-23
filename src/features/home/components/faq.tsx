@@ -57,7 +57,7 @@ export function FAQ() {
           Frequently Asked Questions
         </motion.h2>
         <motion.p variants={itemVariants} className="text-slate-600 max-w-2xl mx-auto">
-          Got questions? We've got answers
+          Got questions? We&apos;ve got answers
         </motion.p>
       </motion.div>
 

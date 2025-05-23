@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Github, Menu, DiscIcon as Discord, ArrowLeft, Home, Sparkles } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { usePathname } from "next/navigation"
 
@@ -14,39 +14,39 @@ export function Header({ isHome = false }: { isHome?: boolean }) {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
   const pathname = usePathname()
 
-  let lastScrollY = 0
+const lastScrollY = useRef(0)
 
-  const handleScroll = () => {
-    const currentScrollY = window.scrollY
-    const documentHeight = document.documentElement.scrollHeight
-    const windowHeight = window.innerHeight
+const handleScroll = useCallback(() => {
+  const currentScrollY = window.scrollY
+  const documentHeight = document.documentElement.scrollHeight
+  const windowHeight = window.innerHeight
 
-    if (currentScrollY + windowHeight >= documentHeight) {
-      setShowHeader(false)
-      return
-    }
-
-    if (currentScrollY === 0) {
-      setShowHeader(true)
-      return
-    }
-
-    if (currentScrollY > lastScrollY) {
-      setShowHeader(false)
-    } else if (currentScrollY <= lastScrollY) {
-      setShowHeader(true)
-    }
-
-    lastScrollY = currentScrollY
+  if (currentScrollY + windowHeight >= documentHeight) {
+    setShowHeader(false)
+    return
   }
 
-  useEffect(() => {
-    const throttleScroll = handleScroll //debounce(handleScroll, 20);
-    window.addEventListener("scroll", throttleScroll)
-    return () => {
-      window.removeEventListener("scroll", throttleScroll)
-    }
-  }, [])
+  if (currentScrollY === 0) {
+    setShowHeader(true)
+    return
+  }
+
+  if (currentScrollY > lastScrollY.current) {
+    setShowHeader(false)
+  } else if (currentScrollY <= lastScrollY.current) {
+    setShowHeader(true)
+  }
+
+  lastScrollY.current = currentScrollY
+}, [])
+
+useEffect(() => {
+  window.addEventListener("scroll", handleScroll)
+  return () => {
+    window.removeEventListener("scroll", handleScroll)
+  }
+}, [handleScroll])
+
 
   const debounce = <T extends (...args: any[]) => void>(func: T, wait: number) => {
     let timeout: NodeJS.Timeout

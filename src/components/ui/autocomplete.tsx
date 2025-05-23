@@ -50,7 +50,7 @@ export function AutocompleteInput({
   }
 
   const filteredSuggestions = useMemo(() => suggestions.filter((s) =>
-    s.toLowerCase().includes(inputValue.trim().toLowerCase())) , [inputValue]
+    s.toLowerCase().includes(inputValue.trim().toLowerCase())) , [inputValue, suggestions]
   )
 
   return (

@@ -69,11 +69,12 @@ export const PreviewScreen: React.FC<PreviewScreenProps> = ({
           </style>
         </head>
         <body>
-          ${ convertionController(code, config.format, "html" , config.styling, "tailwind" ) }
+          ${convertionController(code, config.format, "html", config.styling, "tailwind")}
         </body>
       </html>
     `;
-  }, [code, previewDevice, height]);
+  }, [code, height, config.format, config.styling, currentDevice.size]);
+
 
   return (
     <div className="flex items-center justify-center h-full">

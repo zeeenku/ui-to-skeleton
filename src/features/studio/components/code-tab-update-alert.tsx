@@ -22,7 +22,7 @@ export function UpdateUITabAlert() {
         <AlertDialogHeader>
           <AlertDialogTitle>Update UI Tab?</AlertDialogTitle>
           <AlertDialogDescription>
-            You're about to overwrite the updates you made in the skeleton code tab. Are you sure you want to continue?
+            You&apos;re about to overwrite the updates you made in the skeleton code tab. Are you sure you want to continue?
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

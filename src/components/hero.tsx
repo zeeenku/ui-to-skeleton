@@ -19,7 +19,7 @@ export function Hero() {
     <div className="relative w-full min-h-screen overflow-hidden">
       {/* Enhanced Background layer */}
       <div className="absolute -inset-1 z-0">
-        <BackgroundBeamsWithCollision className="glass-effect backdrop-blur-md" children={undefined} />
+        <BackgroundBeamsWithCollision className="glass-effect backdrop-blur-md"  />
       </div>
 
       {/* Animated gradient orbs - more cyan focused */}
@@ -139,7 +139,7 @@ export function Hero() {
               <Zap className="h-6 w-6" />
             </div>
             <p className="text-cyan-900 dark:text-cyan-100 text-center md:text-left">
-              <span className="font-semibold">Feels like AI magic</span>, but it's just{" "}
+              <span className="font-semibold">Feels like AI magic</span>, but it&apos;s just{" "}
               <span className="inline-flex items-center px-2 py-0.5 rounded bg-cyan-100 text-cyan-800 font-mono text-sm">
                 <Code className="h-3.5 w-3.5 mr-1" />
                 code
