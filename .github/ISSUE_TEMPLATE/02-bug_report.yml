@@ -1,4 +1,4 @@
-name: Report a bug
+name: 🐞 Report a bug
 description: Something is not working? Report a bug
 title: "[Bug]: "
 labels: [":bug: bug", ":eyes: triage"]
@@ -22,27 +22,11 @@ body:
         Tell us exactly how to reproduce the issue.
       placeholder: |-
         1. Go to the tool
-        2. Paste this UI code: [...]
-        3. Click "Generate"
-        4. Observe the issue
+        2. Go to this page
+        3. Do this
+        4. Dont do that
     validations:
       required: true
-
-  - type: textarea
-    id: ui-code
-    attributes:
-      label: UI Code (if relevant)
-      description: >-
-        Paste the exact UI code that triggered the issue, if applicable.
-      render: shell
-
-  - type: textarea
-    id: skeleton-output
-    attributes:
-      label: Generated Skeleton (optional)
-      description: >-
-        If the tool generated incorrect output, paste it here.
-      render: shell
 
   - type: textarea
     id: env
