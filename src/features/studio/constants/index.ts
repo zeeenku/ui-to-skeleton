@@ -2,7 +2,8 @@ import { Monitor, Smartphone, Tablet } from "lucide-react";
 import { CodeFileTabConfig, SkeletonCodeConfigStylings, SkeletonConfig, UiCodeConfigStylings } from "../types";
 
 export const getOpenIssueLInk = () => {
-  return "https://github.com/zeeenku/ui-to-skeleton/issues/new";
+return "https://github.com/zeeenku/ui-to-skeleton/issues/new?template=01-bad_generation.yml&title=[Skeleton%20Bug]%20-%20Skeleton%20does%20not%20match%20UI";
+  // return "https://github.com/zeeenku/ui-to-skeleton/issues/new";
 }
 export type DeviceType = {
   name: string;

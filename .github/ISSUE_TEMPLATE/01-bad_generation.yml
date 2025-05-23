@@ -3,7 +3,6 @@ description: "Generated skeleton doesn't work as expected"
 title: "[Skeleton Gen Bug] - "
 labels: [bug, skeleton]
 body:
-
   - type: textarea
     id: ui-code
     attributes:
