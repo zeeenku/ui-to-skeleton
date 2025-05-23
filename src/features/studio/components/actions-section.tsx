@@ -13,6 +13,7 @@ import { getOpenIssueLInk } from "../constants";
 import { LayoutMode } from "../types";
 import { useSkeletonStore } from "../stores";
 import { useSkeletonsCount } from "../api/skeletons-count";
+import { FullscreenButton } from "./fullscreen-btn";
 
 interface ActionsSectionProps {
   layoutMode: LayoutMode;
@@ -51,6 +52,9 @@ export function ActionsSection({
       </div>
 
       <div className="flex flex-wrap gap-2 items-center">
+
+        <FullscreenButton />
+
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>

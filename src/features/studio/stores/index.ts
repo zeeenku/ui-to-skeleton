@@ -95,13 +95,16 @@ export const useSkeletonStore = create<SkeletonStore>()(
 
 
       skeletonConfig: DEFAULT_SKELETON_STYLE,
-      setSkeletonConfig: (config) =>
+      setSkeletonConfig: (config) => {
         set((state) => ({
           skeletonConfig: {
             ...state.skeletonConfig,
             ...config,
           },
-        })),
+        }))
+                console.log("set skeleton config")
+
+      },
       uiCodeConfig: DEFAULT_UI_CONFIG,
       skeletonCodeConfig: DEFAULT_SKELETON_CONFIG,
 

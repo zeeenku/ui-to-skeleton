@@ -15,7 +15,7 @@ export function Editors() {
 
       <div className="bg-[#1e1e1e] overflow-hidden rounded-xl border border-[#1e1e1e] shadow-lg transition-all duration-300 hover:shadow-xl h-[calc(100dvh-4rem)]">
         {/* Keep Tabs wrapper for TabsList and TabsTrigger */}
-        <Tabs value={activeCodeTab} onValueChange={setActiveCodeTab} className="h-full bg-[#1e1e1e] border border-[#1e1e1e]">
+        <Tabs value={activeCodeTab} onValueChange={(val) => setActiveCodeTab(val as "ui" | "skeleton")} className="h-full bg-[#1e1e1e] border border-[#1e1e1e]">
           <div className="border-none p-3 border-b bg-[#2d2d30] text-sm text-white flex items-center justify-between z-10 relative">
             <TabsList className="grid w-48 grid-cols-2 bg-[#3e3e42]">
               <TabsTrigger value="ui" className="text-white data-[state=active]:bg-[#1e1e1e]">

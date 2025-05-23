@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useCallback } from "react";
 import { useSkeletonStore } from "../stores/index";
 import { stylesPreviewDependencies } from "../constants";
 import { convertionController } from "../func/convertion";
@@ -17,18 +17,27 @@ export const SkeletonGeneratorHandler: React.FC<SkeletonGeneratorHandlerProps> =
 }) => {
   const localRef = useRef<HTMLIFrameElement | null>(null);
 
-  const setIframeRef = useSkeletonStore((s) => s.setIframeRef);
-  const setIframeLoaded = useSkeletonStore((s) => s.setIframeLoaded);
-  const setGeneratedSkeletonCode = useSkeletonStore((s) => s.setGeneratedSkeletonCode);
+  // Separate selectors for setters
+  const setIframeRef = useSkeletonStore((state) => state.setIframeRef);
+  const setIframeLoaded = useSkeletonStore((state) => state.setIframeLoaded);
+  const setGeneratedSkeletonCode = useSkeletonStore((state) => state.setGeneratedSkeletonCode);
 
-  const { uiCode, uiCodeConfig, skeletonConfig } = useSkeletonStore();
+  // State selectors
+  const uiCode = useSkeletonStore((state) => state.uiCode);
+  const uiCodeConfig = useSkeletonStore((state) => state.uiCodeConfig);
+  const skeletonConfig = useSkeletonStore((state) => state.skeletonConfig);
 
-  // Generate srcDoc
+  // Trigger when skeletonConfig updates
+  useEffect(() => {
+    console.log("skeletonConfig updated:", skeletonConfig);
+  }, [skeletonConfig]);
+
+  // Generate the iframe srcDoc including preview styling and user UI code
   const srcDoc = useMemo(() => {
     return `
       <html>
         <head>
-          ${stylesPreviewDependencies[uiCodeConfig.styling]}
+          ${stylesPreviewDependencies[uiCodeConfig.styling] || ""}
           <style>
             body {
               margin: 0;
@@ -53,15 +62,22 @@ export const SkeletonGeneratorHandler: React.FC<SkeletonGeneratorHandlerProps> =
         </body>
       </html>
     `;
-  }, [uiCode, uiCodeConfig]);
+  }, [uiCode, uiCodeConfig.format, uiCodeConfig.styling]);
 
-  // Register iframe ref with Zustand
+  // Register iframe ref once
   useEffect(() => {
     setIframeRef(localRef);
   }, [setIframeRef]);
 
-  // Handle iframe load event and generate skeleton
-  const handleIframeLoad = () => {
+
+  const iframeKey = useMemo(
+  () =>
+    `${skeletonConfig.color}-${skeletonConfig.intensity}-${skeletonConfig.defaultBorderRadius}`,
+  [skeletonConfig]
+);
+
+  // Handle iframe load
+  const handleIframeLoad = useCallback(() => {
     const iframe = localRef.current;
     if (!iframe) return;
 
@@ -70,39 +86,39 @@ export const SkeletonGeneratorHandler: React.FC<SkeletonGeneratorHandlerProps> =
 
     console.log("Iframe content loaded");
 
-    // Generate skeleton HTML from the iframe content
     const skeleton = createSkeletonHTMLTagFromDOM(app);
-    const skeletonHTML = skeleton.render( `bg-${skeletonConfig.color}-${skeletonConfig.intensity}`,skeletonConfig.defaultBorderRadius).outerHTML;
+    const skeletonHTML = skeleton.render(
+      `bg-${skeletonConfig.color}-${skeletonConfig.intensity}`,
+      skeletonConfig.defaultBorderRadius
+    ).outerHTML;
 
     console.log("Generated skeleton HTML:", skeletonHTML);
 
-    // Set generated skeleton code in Zustand
     setGeneratedSkeletonCode(skeletonHTML);
-    setIframeLoaded(true); // Mark iframe as loaded
-  };
+    setIframeLoaded(true);
+  }, [skeletonConfig, setGeneratedSkeletonCode, setIframeLoaded]);
 
+  // Attach iframe load listener
   useEffect(() => {
-    // Listen for iframe load event
     const iframe = localRef.current;
-    if (iframe) {
-      iframe.addEventListener("load", handleIframeLoad);
-    }
+    if (!iframe) return;
 
-    // Cleanup on component unmount or ref change
+    iframe.addEventListener("load", handleIframeLoad);
     return () => {
-      if (iframe) {
-        iframe.removeEventListener("load", handleIframeLoad);
-      }
+      iframe.removeEventListener("load", handleIframeLoad);
     };
-  }, [srcDoc, setGeneratedSkeletonCode]);
+  }, [handleIframeLoad]);
 
+  // Force iframe to reload when srcDoc OR skeletonConfig changes
   useEffect(() => {
     setIframeLoaded(false);
-  }, [srcDoc]);
+    console.log("Triggered reload due to srcDoc or skeletonConfig change");
+  }, [srcDoc, skeletonConfig, setIframeLoaded]);
 
   return (
     <iframe
       ref={localRef}
+      key={iframeKey}
       srcDoc={srcDoc}
       title={title}
       className={`fixed left-full h-screen w-screen border-0 ${className}`}
