@@ -100,40 +100,12 @@ export default function Home() {
               </div>
             </div>
 
-            {/* FAQ Section */}
 
-            <FAQ/>
-            <div className="container px-4" id="faq">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold text-gradient mb-4">Frequently Asked Questions</h2>
-                <p className="text-slate-600 max-w-2xl mx-auto">Got questions? We've got answers</p>
-              </div>
-
-              <div className="max-w-3xl mx-auto space-y-6">
-                  <AccordionItem title={<h3>What is a skeleton loader?</h3>}>
-                    A skeleton loader is a placeholder that mimics the layout of content while it's loading. It provides a better user experience than traditional spinners or loading indicators.
-                  </AccordionItem>
-
-                  <AccordionItem title={<h3>Which frameworks are supported?</h3>}>
-                    UI to Skeleton works with all major frontend frameworks including React, Vue, Angular, and vanilla HTML/CSS.
-                  </AccordionItem>
-
-                  <AccordionItem title={<h3>Can I customize the animations?</h3>}>
-                    Yes! You can customize the animation type, speed, and other properties to match your design system.
-                  </AccordionItem>
-
-                  <AccordionItem title={<h3>Is there an API available?</h3>}>
-                    Yes, API access is available on the Team plan, allowing you to integrate skeleton generation directly into your workflow.
-                  </AccordionItem>
-              </div>
-            </div>
-
- 
-
+              <FAQ/>
 
               <CTA/>
             
-    <Footer/>
+              <Footer/>
           </div>
 
 

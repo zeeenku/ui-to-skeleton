@@ -18,7 +18,7 @@ export function CTA() {
   }, [isInView, controls])
 
   return (
-    <div className="px-4 mt-10">
+    <div className="px-4">
     <div className="container relative" ref={ref}>
       {/* Animated background blobs - Fixed z-index */}
       <motion.div
@@ -86,7 +86,7 @@ export function CTA() {
             },
           },
         }}
-        className="relative bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-2xl p-8 md:p-12 shadow-xl max-w-5xl mx-auto text-center text-white z-20 overflow-hidden"
+        className="relative bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-2xl p-8 md:p-12 shadow-xl max-w-3xl mx-auto text-center text-white z-20 overflow-hidden"
       >
         {/* Grid background - Behind content */}
         <div className="absolute inset-0 bg-grid-white/[0.1] bg-[size:20px_20px] pointer-events-none" />
