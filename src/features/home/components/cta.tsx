@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { motion, useAnimation, useInView } from "framer-motion"
-import { Wand2, Github } from "lucide-react"
+import { Wand2, Github, HelpCircle } from "lucide-react"
 
 export function CTA() {
   const ref = useRef(null)
@@ -18,8 +18,8 @@ export function CTA() {
   }, [isInView, controls])
 
   return (
-    <div className="px-4">
-    <div className="container px-4 py-16 relative" ref={ref}>
+    <div className="px-4 mt-10">
+    <div className="container relative" ref={ref}>
       {/* Animated background blobs - Fixed z-index */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -188,8 +188,8 @@ export function CTA() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Github className="h-5 w-5" />
-                  <span>I have an Issue</span>
+                  <HelpCircle className="h-5 w-5" />
+                  <span>I have a Question</span>
                 </a>
               </Button>
             </motion.div>

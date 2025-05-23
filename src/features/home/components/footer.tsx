@@ -3,7 +3,7 @@ import Link from "next/link"
 import Image from "next/image" 
 export function Footer(){
     return (
-    <footer className="border-t w-full px-4 lg:px-16 py-12 mt-5 bg-white relative z-10">
+    <footer className="border-t w-full px-4 lg:px-16 py-12 bg-white relative z-10">
         <div className="">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="md:col-span-2">

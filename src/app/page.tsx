@@ -20,17 +20,11 @@ import { Demo } from "@/components/demo"
 import { Comparaison } from "@/components/comparaison"
 import { Features } from "@/components/features"
 import { Footer } from "@/features/home/components/footer"
-import { AccordionItem } from "@/components/faq-accordion"
+import { AccordionItem } from "@/features/home/components/faq-accordion"
 import { CTA } from "@/features/home/components/cta"
+import { FAQ } from "@/features/home/components/faq"
 
 export default function Home() {
-  const [showEditor, setShowEditor] = useState(false)
-  const [usageCount, setUsageCount] = useLocalStorage("usageCount", 0)
-
-  useEffect(() => {
-    setUsageCount((prev) => prev + 1)
-  }, [])
-
 
   const testimonials = [
   {
@@ -66,7 +60,6 @@ export default function Home() {
      <Header isHome={true} />
 
       <main className="w-full flex-1 relative z-10">
-        {!showEditor ? (
           <div className="w-full flex flex-col items-center justify-center space-y-24">
 
             <div className="space-y-8">
@@ -108,6 +101,8 @@ export default function Home() {
             </div>
 
             {/* FAQ Section */}
+
+            <FAQ/>
             <div className="container px-4" id="faq">
               <div className="text-center mb-12">
                 <h2 className="text-3xl font-bold text-gradient mb-4">Frequently Asked Questions</h2>
@@ -133,44 +128,14 @@ export default function Home() {
               </div>
             </div>
 
-            {/* CTA Section
-            <div className="container px-4">
-              <div className="bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-2xl p-8 md:p-12 shadow-xl max-w-5xl mx-auto text-center text-white">
-                <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to transform your loading experience?</h2>
-                <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-                  Be part of thousands of developers designing beautiful skeleton loaders in just moments, not hours.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button
-                    size="lg"
-                    className="bg-white text-cyan-700 hover:bg-cyan-50"
-                    asChild
-                  >
-                    <Link href="/studio">
-                      Get Your Skeleton 
-                    </Link>
-                  </Button>
-                  <Button asChild size="lg" variant="outline" className="border-white text-cyan-700 hover:bg-white/10">
-                    <a href="https://github.com/zeeenku/ui-to-skeleton/issues/new">I have an Issue</a>
-                  </Button>
-                </div>
-              </div>
-            </div> */}
+ 
 
 
               <CTA/>
-            {/* <Alert className="max-w-lg bg-cyan-50 border-cyan-200 text-cyan-800">
-              <AlertDescription>
-                This is the first version of UI to Skeleton. More features will be added in future updates.
-              </AlertDescription>
-            </Alert> */}
-
             
     <Footer/>
           </div>
-        ) : (
-          <CodeEditor />
-        )}
+
 
       </main>
 
