@@ -12,7 +12,7 @@ import { usePathname } from "next/navigation"
 export function Header({ isHome = false }: { isHome?: boolean }) {
   const [showHeader, setShowHeader] = useState(true)
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
-  const pathname = usePathname()
+  const pathname  = usePathname()
 
 const lastScrollY = useRef(0)
 
