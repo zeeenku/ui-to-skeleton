@@ -17,15 +17,10 @@ const eslintConfig = [
     // },
     // for now before I build
     rules: {
-  '@typescript-eslint/no-unused-vars': [
-      'warn', // or 'off' if you want to ignore completely
-      {
-        varsIgnorePattern: '^_',
-        argsIgnorePattern: '^_',
-        caughtErrorsIgnorePattern: '^_',
-      },
-    ],
-  '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-empty-interface': 'off',
+    'no-console': 'off',
 }
 
   },
