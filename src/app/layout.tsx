@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner"
-import { Script } from 'next/script';
+import Script from "next/script.js"
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta-sans",
   subsets: ["latin"],
