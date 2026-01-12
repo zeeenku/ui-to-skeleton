@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner"
-
+import { Script } from 'next/script';
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta-sans",
   subsets: ["latin"],
@@ -26,6 +26,12 @@ export default function RootLayout({
       >
         <Toaster />
         {children}
+         <Script
+        src="https://analytics-2.zeenku.com/api/script.js"
+        data-site-id="7866d17130af"
+        defer
+        strategy="afterInteractive"
+      />
       </body>
     </html>
   );
